@@ -1,0 +1,106 @@
+@use "../abstracts/index.module" as abstracts;
+
+.management {
+    @include abstracts.display-flex-row;
+    height: calc(100vh);
+    .sidebar {
+        @include abstracts.display-flex-column;
+        gap:5px;
+        width: 240px;
+        height: 100%;
+        padding: 20px;
+        overflow-y: auto;
+        &__logo {
+            padding: 0px 10px 10px 10px;
+            border-bottom: 1px solid gray;
+        }
+        &__link {
+            padding: 10px;
+            border-radius: 5px;
+            color: #999999;
+            &:hover {
+                color:#000;
+                background-color: #e6e6e6;
+            }
+            &--active {
+                @extend .sidebar__link;
+                color:#000;
+                background-color: #e6e6e6;
+            }
+        }
+        &__account {
+            margin-top: auto;
+        }
+    }
+    .dashboard {
+        width: calc(100% - 240px);
+        padding: 20px 30px;
+        background-color: #e6e6e6;
+        overflow-y: auto;
+        &__main {
+            height:100%;
+            @include abstracts.display-flex-column;
+            gap: 20px;
+            & > h1 {
+                font-size: 28px;
+            }
+            &__content {
+                @extend .dashboard-content;
+            }
+        }
+        &__orders{
+            height:100%;
+            @include abstracts.display-flex-column;
+            gap: 20px;
+            & > h1 {
+                font-size: 28px;
+            }
+            &__content {
+                @extend .dashboard-content;
+                &__table-container {
+                    @include abstracts.display-flex-column;
+                    gap: 10px;
+                    &__search {
+                        border-radius: 100px;
+                        padding:10px;
+                        border:0;
+                        width:340px;
+                        background-color: #f5f6f6;
+                    }
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                    td,
+                    th {
+                        border: 1px solid #dddddd;
+                        text-align: left;
+                        padding: 8px;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #dddddd;
+                    }
+                }
+            }
+        }
+        &__customers{
+            height:100%;
+            @include abstracts.display-flex-column;
+            gap: 20px;
+            & > h1 {
+                font-size: 28px;
+            }
+            &__content {
+                @extend .dashboard-content;
+            }
+        }
+    }
+}
+
+.dashboard-content {
+    overflow-y: auto;
+    background-color: #fff;
+    height:100%;
+    border-radius: abstracts.$border-box-radius;
+    padding: 20px;
+}

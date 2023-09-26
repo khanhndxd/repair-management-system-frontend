@@ -1,0 +1,32 @@
+@use "./variables.module" as variables;
+@mixin display-flex-row() {
+    display: flex;
+    flex-direction: row; 
+}
+
+@mixin display-flex-column() {
+    display: flex;
+    flex-direction: column;
+}
+
+@mixin display-grid-column-flow() {
+    display: grid;
+    grid-auto-flow: column;
+}
+
+@mixin display-grid-row-flow() {
+    display: grid;
+    grid-auto-flow: row;
+}
+
+@mixin display-grid() {
+    display: grid;
+}
+
+@mixin info-box() {
+    @include display-flex-column;
+    border-radius: variables.$border_box_radius;
+    border: 0.5px solid #ccc;
+    gap:20px;
+    padding:20px;
+}

@@ -1,0 +1,64 @@
+@use "../abstracts/index.module" as abstracts;
+$duration: 4000ms;
+
+.notification {
+    @include abstracts.display-flex-row;
+    gap: 10px;
+    align-items: center;
+    padding: 15px;
+    position: fixed;
+    color: #FFF;
+    bottom:3%;
+    left:50%;
+    transform: translateX(-50%);
+    width: 550px;
+    border-radius: 100px;
+    background-color: #5dac51;
+    &--info {
+        @extend .notification;
+        background-color: #5bc0de;
+        animation: fade-in 500ms, fade-out 500ms $duration;
+        animation-fill-mode: forwards;
+    }
+    &--success {
+        @extend .notification;
+        background-color: #5dac51;
+        animation: fade-in 500ms, fade-out 500ms $duration;
+        animation-fill-mode: forwards;
+    }
+    &--warning {
+        @extend .notification;
+        background-color: #ffcc00;
+        animation: fade-in 500ms, fade-out 500ms $duration;
+        animation-fill-mode: forwards;
+    }
+    &--error {
+        @extend .notification;
+        background-color: #ff9966;
+        animation: fade-in 500ms, fade-out 500ms $duration;
+        animation-fill-mode: forwards;
+    }
+    &--hidden {
+        display: none;
+    }
+}
+@keyframes fade-in {
+    from {
+        bottom: 0;
+        opacity: 0;
+    }
+    to {
+        bottom: 3%;
+        opacity: 1;
+    }
+}
+@keyframes fade-out {
+    from {
+        bottom: 3%;
+        opacity: 1;
+    }
+    to {
+        bottom: 0;
+        opacity: 0;
+    }
+}

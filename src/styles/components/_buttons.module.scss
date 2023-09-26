@@ -1,0 +1,39 @@
+@use "../abstracts/index.module" as abstracts;
+
+.button {
+    padding: 8px 16px;
+    border-radius: 100px;
+    border: none;
+    background-color: map-get($map: abstracts.$bgColors, $key: main);
+    color: #fff;
+    cursor: pointer;
+    &:hover {
+        background-color: #f5f6f6;
+        color:#000;
+    }
+    & > span {
+        font-size: 15px;
+    }
+}
+
+.button-outline { 
+    @extend .button;
+    background-color: #f5f6f6;
+    border: 1px solid #000;
+    color:#000;
+    &:hover {
+        background-color: map-get($map: abstracts.$bgColors, $key: main);
+        color:#fff;
+    }
+}
+
+.button-fit-content {
+    @extend .button;
+    width:fit-content;
+}
+
+.no-effect-button {
+    cursor: pointer;
+    border:none;
+    background-color: transparent;
+}

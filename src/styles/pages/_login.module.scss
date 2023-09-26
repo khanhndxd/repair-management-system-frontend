@@ -1,0 +1,38 @@
+@use "../abstracts/index.module" as abstracts;
+
+.login {
+    display:flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 128px;
+    .box-login {
+        @include abstracts.display-flex-column;
+        width: 380px;
+        background-color: #f5f6f6;
+        border-radius: abstracts.$border-box-radius;
+        padding:20px;
+        gap: 20px;
+        &__input {
+            @include abstracts.display-flex-column;
+            gap:10px;
+            & > input {
+                border-radius: 5px;
+                font-size: 16x;
+                padding: 5px;
+                border: 1px solid gray;
+            }
+        }
+        &__actions {
+            @include abstracts.display-flex-row;
+            align-items: center;
+            justify-content: space-between;
+            & a {
+                color:green;
+            }
+            & > p {
+                font-size: 12px;
+            }
+        }
+    }
+}
