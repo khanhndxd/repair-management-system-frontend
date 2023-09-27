@@ -6,6 +6,12 @@
     align-items: center;
     justify-content: center;
     margin: 0px 128px;
+    position: relative;
+    & > h1 {
+        position: absolute;
+        top:0;
+        left:0;
+    }
     .box-login {
         @include abstracts.display-flex-column;
         width: 380px;

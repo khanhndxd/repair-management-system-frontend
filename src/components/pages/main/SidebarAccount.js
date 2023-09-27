@@ -10,7 +10,7 @@ export default function SidebarAccount() {
 
   const handleLogout = () => {
     router.push("/dang-nhap");
-    dispatch(showNotification({ message: "Sucess", type: "success" }));
+    dispatch(showNotification({ message: "Đăng xuất thành công", type: "success" }));
   };
 
   return (

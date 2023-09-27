@@ -8,7 +8,7 @@
         gap:5px;
         width: 240px;
         height: 100%;
-        padding: 20px;
+        padding: 10px 20px;
         overflow-y: auto;
         &__logo {
             padding: 0px 10px 10px 10px;
@@ -34,13 +34,13 @@
     }
     .dashboard {
         width: calc(100% - 240px);
-        padding: 20px 30px;
+        padding: 10px 20px;
         background-color: #e6e6e6;
         overflow-y: auto;
         &__main {
             height:100%;
             @include abstracts.display-flex-column;
-            gap: 20px;
+            gap: 10px;
             & > h1 {
                 font-size: 28px;
             }
