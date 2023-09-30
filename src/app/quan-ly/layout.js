@@ -12,9 +12,10 @@ export default function ManagementLayout({ children }) {
             <h1>LOGO</h1>
           </Link>
         </div>
-        <SidebarLink content={"Quản lý chung"} href="/quan-ly" />
+        <SidebarLink content={"Trang chủ"} href="/quan-ly" />
         <SidebarLink content={"Quản lý bảo hành/sửa chữa"} href="/quan-ly/bao-hanh-sua-chua" />
         <SidebarLink content={"Quản lý khách hàng"} href="/quan-ly/khach-hang" />
+        <SidebarLink content={"Tiếp nhận bảo hành"} href="/quan-ly/tiep-nhan-bao-hanh" />
         <SidebarAccount />
       </aside>
       <div className={styles["dashboard"]}>{children}</div>

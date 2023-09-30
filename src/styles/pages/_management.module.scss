@@ -35,17 +35,64 @@
     .dashboard {
         width: calc(100% - 240px);
         padding: 10px 20px;
-        background-color: #e6e6e6;
+        background-color: #f2f2f2;
         overflow-y: auto;
         &__main {
             height:100%;
             @include abstracts.display-flex-column;
             gap: 10px;
             & > h1 {
-                font-size: 28px;
+                font-size: 24px;
             }
             &__content {
-                @extend .dashboard-content;
+                // @extend .dashboard-content;
+                @include abstracts.display-flex-column;
+                gap:10px;
+                & > p {
+                    color:#999999;
+                    font-size: 12px;
+                }
+                &__overview {
+                    @include abstracts.display-grid;
+                    grid-template-columns: 1fr 1fr 1fr 1fr;
+                    gap: 20px;
+                    padding: 20px;
+                    &__box {
+                        @include abstracts.display-flex-column;
+                        padding: 20px;
+                        border-radius: abstracts.$border-box-radius;
+                        border: 1px solid #ccc;
+                        gap: 20px;
+                        &--1{
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #071E22;
+                            color:#fff;
+                        }
+                        &--2 {
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #1D7874;
+                            color:#fff;
+                        }
+                        &--3 {
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #679289;
+                            color:#fff;
+                        }
+                        &--4 {
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #bb2124;
+                            color:#fff;
+                        }
+                        &--5 {
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #F4C095;
+                            color:#000;
+                        }
+                        & > h3 {
+                            font-size: 22px;
+                        }
+                    }
+                }
             }
         }
         &__orders{
@@ -53,10 +100,17 @@
             @include abstracts.display-flex-column;
             gap: 20px;
             & > h1 {
-                font-size: 28px;
+                font-size: 24px;
+            }
+            &__actions {
+                @include abstracts.display-flex-row;
+                gap: 10px;
+                align-items: center;
             }
             &__content {
-                @extend .dashboard-content;
+                // @extend .dashboard-content;
+                @include abstracts.display-flex-column;
+                gap:10px;
                 &__table-container {
                     @include abstracts.display-flex-column;
                     gap: 10px;
@@ -74,11 +128,16 @@
                     td,
                     th {
                         border: 1px solid #dddddd;
-                        text-align: left;
-                        padding: 8px;
+                        text-align: center;
                     }
                     tr:nth-child(even) {
                         background-color: #dddddd;
+                    }
+                    &__actions {
+                        @include abstracts.display-flex-row;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 15px;
                     }
                 }
             }
@@ -88,10 +147,47 @@
             @include abstracts.display-flex-column;
             gap: 20px;
             & > h1 {
-                font-size: 28px;
+                font-size: 24px;
             }
             &__content {
-                @extend .dashboard-content;
+                // @extend .dashboard-content;
+                @include abstracts.display-flex-column;
+                gap:10px;
+            }
+        }
+        &__neworder {
+            height:100%;
+            @include abstracts.display-flex-column;
+            gap: 20px;
+            & > h1 {
+                font-size: 24px;
+            }
+            &__content {
+                @include abstracts.display-flex-column;
+                gap:20px;
+                &__actions {
+                    @include abstracts.display-flex-row;
+                    gap: 10px;
+                    align-items: center;
+                }
+                &__info {
+                    @include abstracts.display-grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 20px;
+                    &__box {
+                        padding: 10px;
+                        border-radius: abstracts.$border-box-radius;
+                        border: 1px solid #ccc;
+                        background-color: #fff;
+                    }
+                }
+                &__product {
+                    padding: 10px;
+                    border-radius: abstracts.$border-box-radius;
+                    border: 1px solid #ccc;
+                    background-color: #fff;
+                    width: 100%;
+                }
             }
         }
     }
