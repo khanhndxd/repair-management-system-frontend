@@ -29,12 +29,12 @@ export default function Home() {
           </div>
           <div className={styles["dashboard__main__content__overview__box--5"]}>
             <h3>9</h3>
-            <h4>Đã trả hàng</h4>
+            <h4>Đã hoàn thành</h4>
             <button className={styles["button-outline"]}>Xem danh sách</button>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--5"]}>
+          <div className={styles["dashboard__main__content__overview__box--6"]}>
             <h3>9</h3>
-            <h4>Đã hoàn thành</h4>
+            <h4>Đã trả hàng</h4>
             <button className={styles["button-outline"]}>Xem danh sách</button>
           </div>
         </div>

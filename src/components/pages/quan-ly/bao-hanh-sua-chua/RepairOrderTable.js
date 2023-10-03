@@ -7,9 +7,10 @@ import { useMemo, useState } from "react";
 const statuses = {
   0: { content: "Chờ xử lý", color: "#c79a7b" },
   1: { content: "Đang sửa chữa", color: "#ff9966" },
-  2: { content: "Chờ linh kiện", color: "#ffcc00" },
+  2: { content: "Đã sửa xong", color: "#ffcc00" },
   3: { content: "Đã hủy", color: "#cc3300" },
   4: { content: "Hoàn thành", color: "#99cc33" },
+  5: { content: "Đã trả hàng", color: "#3D7EC5" },
 };
 
 export default function RepairOrderTable() {
@@ -24,7 +25,7 @@ export default function RepairOrderTable() {
       { id: 7, name: "world 8", price: 5000, status: 1 },
       { id: 8, name: "world 9", price: 5000, status: 0 },
       { id: 9, name: "world 10", price: 5000, status: 0 },
-      { id: 10, name: "world 11", price: 5000, status: 0 },
+      { id: 10, name: "world 11", price: 5000, status: 5 },
       { id: 11, name: "world 12", price: 5000, status: 0 },
       { id: 12, name: "world 13", price: 5000, status: 0 },
     ];
@@ -57,7 +58,6 @@ export default function RepairOrderTable() {
   const handleUpdate = (id) => {
     alert("update " + id);
   };
-
   const tableHooks = (hooks) => {
     hooks.visibleColumns.push((columns) => {
       return [

@@ -65,28 +65,33 @@
                         gap: 20px;
                         &--1{
                             @extend .dashboard__main__content__overview__box;
-                            background-color: #071E22;
+                            background-color: #c79a7b;
                             color:#fff;
                         }
                         &--2 {
                             @extend .dashboard__main__content__overview__box;
-                            background-color: #1D7874;
+                            background-color: #ff9966;
                             color:#fff;
                         }
                         &--3 {
                             @extend .dashboard__main__content__overview__box;
-                            background-color: #679289;
+                            background-color: #ffcc00;
                             color:#fff;
                         }
                         &--4 {
                             @extend .dashboard__main__content__overview__box;
-                            background-color: #bb2124;
+                            background-color: #cc3300;
                             color:#fff;
                         }
                         &--5 {
                             @extend .dashboard__main__content__overview__box;
-                            background-color: #F4C095;
-                            color:#000;
+                            background-color: #99cc33;
+                            color:#fff;
+                        }
+                        &--6 {
+                            @extend .dashboard__main__content__overview__box;
+                            background-color: #3D7EC5;
+                            color:#fff;
                         }
                         & > h3 {
                             font-size: 22px;
@@ -159,6 +164,7 @@
             height:100%;
             @include abstracts.display-flex-column;
             gap: 20px;
+            user-select: none;
             & > h1 {
                 font-size: 24px;
             }
@@ -175,10 +181,28 @@
                     grid-template-columns: 1fr 1fr;
                     gap: 20px;
                     &__box {
+                        @include abstracts.display-flex-column;
+                        gap: 20px;
                         padding: 10px;
                         border-radius: abstracts.$border-box-radius;
                         border: 1px solid #ccc;
                         background-color: #fff;
+                        &__customer {
+                            @include abstracts.display-flex-column;
+                            gap: 20px;
+                            &__detail {
+                                @include abstracts.display-grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap:20px;
+                                &__control {
+                                    @include abstracts.display-flex-column;
+                                    gap: 5px;
+                                    & > p {
+                                        font-style: italic;
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
                 &__product {
@@ -193,10 +217,66 @@
     }
 }
 
-.dashboard-content {
+.new-order-info {
+    @include abstracts.display-grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    &__control {
+        @include abstracts.display-flex-column;
+        gap:5px;
+        & > label {
+            font-style: italic;
+        }
+        & > input, select {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    }
+}
+
+.suggestions {
+    max-height: 200px;
+    padding: 10px;
+    margin-top: 5px;
     overflow-y: auto;
-    background-color: #fff;
-    height:100%;
-    border-radius: abstracts.$border-box-radius;
-    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    @include abstracts.display-flex-column;
+    gap: 5px;
+    user-select: none;
+    & > div:hover {
+        cursor: pointer;
+        background-color: #ccc;
+    }
+}
+
+.customer-info {
+    @include abstracts.display-grid;
+    gap: 5px;
+    &__control {
+        @include abstracts.display-flex-column;
+        gap:5px;
+        & > label {
+            font-style: italic;
+        }
+        & > input {
+            padding: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+    } 
+}
+.customer__control {
+    @include abstracts.display-flex-column;
+    gap:5px;
+    width:100%;
+    & > label {
+        font-style: italic;
+    }
+    & > input {
+        padding: 8px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
 }
