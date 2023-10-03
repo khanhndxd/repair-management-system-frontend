@@ -3,6 +3,7 @@
 import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const statuses = {
   0: { content: "Chờ xử lý", color: "#c79a7b" },
@@ -14,6 +15,8 @@ const statuses = {
 };
 
 export default function RepairOrderTable() {
+  const search = useSearchParams();
+
   const data = useMemo(() => {
     return [
       { id: 1, name: "test 1", price: 20000, status: 0 },
@@ -29,7 +32,7 @@ export default function RepairOrderTable() {
       { id: 11, name: "world 12", price: 5000, status: 0 },
       { id: 12, name: "world 13", price: 5000, status: 0 },
     ];
-  }, []);
+  }, [search.get("status")]);
 
   const columns = useMemo(() => {
     return [
@@ -41,7 +44,15 @@ export default function RepairOrderTable() {
         accessor: "status",
         Cell: ({ value }) => {
           return (
-            <div style={{width:"100%", height:"100%", padding: "8px 0px", backgroundColor: statuses[value].color, fontWeight: "bold" }}>
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                padding: "8px 0px",
+                backgroundColor: statuses[value].color,
+                fontWeight: "bold",
+              }}
+            >
               {statuses[value].content}
             </div>
           );
@@ -49,7 +60,7 @@ export default function RepairOrderTable() {
         Filter: StatusFilter,
       },
     ];
-  }, []);
+  }, [search.get("status")]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDelete = (id) => {
@@ -98,6 +109,14 @@ export default function RepairOrderTable() {
     {
       columns,
       data,
+      initialState: {
+        filters: [
+          {
+            id: "status",
+            value: search.get("status") || "",
+          },
+        ],
+      },
     },
     useFilters,
     useGlobalFilter,
@@ -223,8 +242,16 @@ const ColumnFilter = ({ column }) => {
 
 const StatusFilter = ({ column }) => {
   const { filterValue, setFilter } = column;
+  const router = useRouter();
+  const pathname = usePathname();
+
   return (
-    <select value={filterValue} onChange={(e) => setFilter(e.target.value || undefined)}>
+    <select
+      value={filterValue}
+      onChange={(e) => {
+        router.replace(`${pathname}?status=${e.target.value}`);
+      }}
+    >
       <option value="">Tất cả</option>
       {Object.entries(statuses).map(([value, label]) => (
         <option key={value} value={value}>

@@ -6,6 +6,8 @@
     border: none;
     background-color: map-get($map: abstracts.$bgColors, $key: main);
     color: #fff;
+    text-decoration: none;
+    text-align: center;
     cursor: pointer;
     &:hover {
         background-color: #f5f6f6;

@@ -1,4 +1,5 @@
 import styles from "@/styles/main.module.scss";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -10,32 +11,80 @@ export default function Home() {
           <div className={styles["dashboard__main__content__overview__box--1"]}>
             <h3>100</h3>
             <h4>Chờ xử lý</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 0 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
           <div className={styles["dashboard__main__content__overview__box--2"]}>
             <h3>5</h3>
             <h4>Đang sửa chữa</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 1 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
           <div className={styles["dashboard__main__content__overview__box--3"]}>
             <h3>50</h3>
             <h4>Đã sửa xong</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 2 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
           <div className={styles["dashboard__main__content__overview__box--4"]}>
             <h3>50</h3>
             <h4>Đã hủy</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 3 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
           <div className={styles["dashboard__main__content__overview__box--5"]}>
             <h3>9</h3>
             <h4>Đã hoàn thành</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 4 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
           <div className={styles["dashboard__main__content__overview__box--6"]}>
             <h3>9</h3>
             <h4>Đã trả hàng</h4>
-            <button className={styles["button-outline"]}>Xem danh sách</button>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 5 },
+              }}
+            >
+              Xem danh sách
+            </Link>
           </div>
         </div>
       </div>
