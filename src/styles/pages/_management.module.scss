@@ -63,36 +63,8 @@
                         border-radius: abstracts.$border-box-radius;
                         border: 1px solid #ccc;
                         gap: 20px;
-                        &--1{
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #c79a7b;
-                            color:#fff;
-                        }
-                        &--2 {
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #ff9966;
-                            color:#fff;
-                        }
-                        &--3 {
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #ffcc00;
-                            color:#fff;
-                        }
-                        &--4 {
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #cc3300;
-                            color:#fff;
-                        }
-                        &--5 {
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #99cc33;
-                            color:#fff;
-                        }
-                        &--6 {
-                            @extend .dashboard__main__content__overview__box;
-                            background-color: #3D7EC5;
-                            color:#fff;
-                        }
+                        background-color: #3D7EC5;
+                        color:#fff;
                         & > h3 {
                             font-size: 22px;
                         }
@@ -154,14 +126,49 @@
             & > h1 {
                 font-size: 24px;
             }
+            &__actions {
+                @include abstracts.display-flex-row;
+                gap: 10px;
+                align-items: center;
+            }
             &__content {
                 // @extend .dashboard-content;
                 @include abstracts.display-flex-column;
                 gap:10px;
+                &__table-container {
+                    @include abstracts.display-flex-column;
+                    gap: 10px;
+                    &__search {
+                        border-radius: 100px;
+                        padding:10px;
+                        border:0;
+                        width:340px;
+                        background-color: #f5f6f6;
+                    }
+                    table {
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+                    td,
+                    th {
+                        border: 1px solid #dddddd;
+                        text-align: center;
+                    }
+                    tr:nth-child(even) {
+                        background-color: #dddddd;
+                    }
+                    &__actions {
+                        @include abstracts.display-flex-row;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 15px;
+                    }
+                }
             }
         }
         &__neworder {
-            height:100%;
+            // height:100%;
+            padding: 0px 0px 50px 0px;
             @include abstracts.display-flex-column;
             gap: 20px;
             user-select: none;
@@ -203,14 +210,114 @@
                                 }
                             }
                         }
+                        textarea {
+                            border-radius: 3px;
+                            padding: 5px;
+                            font-size: 14px;
+                        }
                     }
                 }
                 &__product {
                     padding: 10px;
+                    @include abstracts.display-flex-column;
+                    gap:20px;
                     border-radius: abstracts.$border-box-radius;
                     border: 1px solid #ccc;
                     background-color: #fff;
                     width: 100%;
+                    &__actions {
+                        @include abstracts.display-flex-row;
+                        align-items: center;
+                        gap: 10px;
+                    }
+                    
+                    &__table-container {
+                        @extend .table;
+                    }
+                }
+            }
+        }
+        &__orderdetail {
+            @include abstracts.display-flex-column;
+            gap: 20px; 
+            &__header {
+                @include abstracts.display-flex-row;
+                gap:10px;
+                align-items: center;
+                & > span {
+                    padding: 5px;
+                    border-radius: 100px;
+                    transform: rotate(180deg);
+                    cursor: pointer;
+                    &:hover {
+                        transform: rotate(180deg) scale(1.7);
+                    }
+                }
+            }
+            &__actions {
+                @include abstracts.display-flex-row;
+                align-items: center;
+                &__buttons {
+                    @include abstracts.display-flex-row;
+                    align-items: center;
+                    margin-left: auto;
+                    gap: 10px;
+                    & > select {
+                        padding: 8px 16px;
+                        border-radius: 100px;
+                        border: none;
+                        background-color: map-get($map: abstracts.$bgColors, $key: main);
+                        color: #fff;
+                    }
+                    option {
+                        padding: 3px;
+                    }
+                }
+            }
+            h1 {
+                font-size: 24px;
+            }
+            h2 {
+                font-size: 20px;
+            }
+            &__content {
+                @include abstracts.display-grid;
+                grid-template-columns: 2fr 1fr;
+                gap: 20px;
+                &__box {
+                    @include abstracts.display-flex-column;
+                    gap: 20px;
+                    padding: 10px;
+                    border-radius: abstracts.$border-box-radius;
+                    border: 1px solid #ccc;
+                    background-color: #fff;
+                    &__header {
+                        @include abstracts.display-flex-row;
+                        span {
+                            margin-left: auto;
+                            padding:8px 16px;
+                            font-size: 14px;
+                            color:#fff;
+                            background-color: #3D7EC5;
+                            border-radius: 4px;
+                        }
+                    }
+                    & > h3 {
+                        font-size: 25px;
+                        text-align: center;
+                    }
+                    &__customer {
+                        @include abstracts.display-grid;
+                        grid-template-columns: 1fr 1fr;
+                        gap: 10px;
+                    }
+                    &__product {
+                        @extend .table;
+                    }
+                    &__info {
+                        @include abstracts.display-flex-column;
+                        gap:10px;
+                    }
                 }
             }
         }
@@ -278,5 +385,26 @@
         padding: 8px;
         border-radius: 5px;
         border: 1px solid #ccc;
+    }
+}
+
+.table {
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+    td,
+    th {
+        border: 1px solid #dddddd;
+        text-align: center;
+    }
+    tr:nth-child(even) {
+        background-color: #dddddd;
+    }
+    &__actions {
+        @include abstracts.display-flex-row;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
     }
 }

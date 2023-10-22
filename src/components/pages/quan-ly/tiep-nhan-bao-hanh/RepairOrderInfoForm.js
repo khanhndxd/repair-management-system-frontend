@@ -47,6 +47,21 @@ export default function RepairOrderInfoForm(props) {
           <option value="other">Lý do khác</option>
         </select>
       </div>
+      <div className={styles["new-order-info__control"]}>
+        <label htmlFor="repair-type">Loại sửa chữa</label>
+        <select id="repair-type" {...register("repair-type")}>
+          <option value="failure">Sửa chữa</option>
+          <option value="change">Bảo dưỡng</option>
+        </select>
+      </div>
+      <div className={styles["new-order-info__control"]}>
+        <label htmlFor="repair-type">Công việc</label>
+        <select id="repair-type" {...register("repair-type")}>
+          <option value="failure">Thay màn hình</option>
+          <option value="change">Vệ sinh máy tính</option>
+          <option value="change">Thay ram</option>
+        </select>
+      </div>
     </div>
   );
 }

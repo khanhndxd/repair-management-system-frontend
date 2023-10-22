@@ -19,26 +19,22 @@ export default function RepairOrderTable() {
 
   const data = useMemo(() => {
     return [
-      { id: 1, name: "test 1", price: 20000, status: 0 },
-      { id: 2, name: "test 3", price: 40000, status: 1 },
-      { id: 3, name: "test 2", price: 30000, status: 2 },
-      { id: 4, name: "hello 5", price: 90000, status: 0 },
-      { id: 5, name: "world 6", price: 5000, status: 3 },
-      { id: 6, name: "world 7", price: 5000, status: 4 },
-      { id: 7, name: "world 8", price: 5000, status: 1 },
-      { id: 8, name: "world 9", price: 5000, status: 0 },
-      { id: 9, name: "world 10", price: 5000, status: 0 },
-      { id: 10, name: "world 11", price: 5000, status: 5 },
-      { id: 11, name: "world 12", price: 5000, status: 0 },
-      { id: 12, name: "world 13", price: 5000, status: 0 },
+      {
+        id: 1,
+        customer: "test 1",
+        status: 0,
+        created_by: "Khanh",
+        repaired_by: "ABC",
+        created_at: "01/01/2024",
+        receive_at: "02/01/2024",
+      },
     ];
   }, [search.get("status")]);
 
   const columns = useMemo(() => {
     return [
-      { Header: "Mã", accessor: "id", Filter: ColumnFilter },
-      { Header: "Tên", accessor: "name", Filter: ColumnFilter },
-      { Header: "Giá", accessor: "price", Filter: ColumnFilter },
+      { Header: "Mã phiếu", accessor: "id", Filter: ColumnFilter },
+      { Header: "Khách hàng", accessor: "customer", Filter: ColumnFilter },
       {
         Header: "Trạng thái",
         accessor: "status",
@@ -59,6 +55,10 @@ export default function RepairOrderTable() {
         },
         Filter: StatusFilter,
       },
+      { Header: "Người tạo", accessor: "created_by", Filter: ColumnFilter },
+      { Header: "Người tiếp nhận", accessor: "repaired_by", Filter: ColumnFilter },
+      { Header: "Ngày tạo", accessor: "created_at", Filter: ColumnFilter },
+      { Header: "Ngày trả hàng", accessor: "receive_at", Filter: ColumnFilter },
     ];
   }, [search.get("status")]);
 
@@ -66,7 +66,7 @@ export default function RepairOrderTable() {
   const handleDelete = (id) => {
     alert("delete " + id);
   };
-  const handleUpdate = (id) => {
+  const handleDetail = (id) => {
     alert("update " + id);
   };
   const tableHooks = (hooks) => {
@@ -75,12 +75,18 @@ export default function RepairOrderTable() {
         ...columns,
         {
           id: "update",
-          Header: "Cập nhật trạng thái",
+          Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleUpdate(row.values.id)} className={styles["button"]}>
-                Cập nhật
-              </button>
+              <>
+                <button onClick={() => handleDetail(row.values.id)} className={styles["button"]}>
+                  Xem chi tiết
+                </button>
+                |
+                <button onClick={() => handleDelete(row.values.id)} className={styles["button"]}>
+                  Xóa
+                </button>
+              </>
             );
           },
         },

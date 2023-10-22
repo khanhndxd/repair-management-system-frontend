@@ -8,7 +8,7 @@ export default function Home() {
       <div className={styles["dashboard__main__content"]}>
         <p>Danh sách trạng thái các đơn bảo hành</p>
         <div className={styles["dashboard__main__content__overview"]}>
-          <div className={styles["dashboard__main__content__overview__box--1"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>100</h3>
             <h4>Chờ xử lý</h4>
             <Link
@@ -21,9 +21,9 @@ export default function Home() {
               Xem danh sách
             </Link>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--2"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>5</h3>
-            <h4>Đang sửa chữa</h4>
+            <h4>Đã tiếp nhận</h4>
             <Link
               className={styles["button-outline"]}
               href={{
@@ -34,7 +34,33 @@ export default function Home() {
               Xem danh sách
             </Link>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--3"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
+            <h3>5</h3>
+            <h4>Đang sửa chữa</h4>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 1 },
+              }}
+            >
+              Xem danh sách
+            </Link>
+          </div>
+          <div className={styles["dashboard__main__content__overview__box"]}>
+            <h3>5</h3>
+            <h4>Đã chuyển sản phẩm về hãng</h4>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 2 },
+              }}
+            >
+              Xem danh sách
+            </Link>
+          </div>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>50</h3>
             <h4>Đã sửa xong</h4>
             <Link
@@ -47,9 +73,9 @@ export default function Home() {
               Xem danh sách
             </Link>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--4"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>50</h3>
-            <h4>Đã hủy</h4>
+            <h4>Đã nhận sản phẩm từ hãng</h4>
             <Link
               className={styles["button-outline"]}
               href={{
@@ -60,22 +86,35 @@ export default function Home() {
               Xem danh sách
             </Link>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--5"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>9</h3>
-            <h4>Đã hoàn thành</h4>
+            <h4>Đã hủy</h4>
             <Link
               className={styles["button-outline"]}
               href={{
                 pathname: "/quan-ly/bao-hanh-sua-chua",
-                query: { status: 4 },
+                query: { status: 5 },
               }}
             >
               Xem danh sách
             </Link>
           </div>
-          <div className={styles["dashboard__main__content__overview__box--6"]}>
+          <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>9</h3>
-            <h4>Đã trả hàng</h4>
+            <h4>Đã hoàn thành</h4>
+            <Link
+              className={styles["button-outline"]}
+              href={{
+                pathname: "/quan-ly/bao-hanh-sua-chua",
+                query: { status: 5 },
+              }}
+            >
+              Xem danh sách
+            </Link>
+          </div>
+          <div className={styles["dashboard__main__content__overview__box"]}>
+            <h3>9</h3>
+            <h4>Đã trả hàng</h4>
             <Link
               className={styles["button-outline"]}
               href={{
