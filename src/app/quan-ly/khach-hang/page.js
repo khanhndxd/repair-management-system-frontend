@@ -1,4 +1,5 @@
 "use client";
+import CustomerTable from "@/components/pages/quan-ly/khach-hang/CustomerTable";
 import { showNotification } from "@/store/features/notificationSlice";
 import styles from "@/styles/main.module.scss";
 import { useRouter } from "next/navigation";
@@ -20,7 +21,9 @@ export default function Customers() {
           + Tạo mới khách hàng
         </button>
       </div>
-      <div className={styles["dashboard__customers__content"]}></div>
+      <div className={styles["dashboard__customers__content"]}>
+        <CustomerTable />
+      </div>
     </div>
   );
 }
