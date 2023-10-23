@@ -16,6 +16,7 @@ const statuses = {
 
 export default function RepairOrderTable() {
   const search = useSearchParams();
+  const router = useRouter();
 
   const data = useMemo(() => {
     return [
@@ -67,7 +68,7 @@ export default function RepairOrderTable() {
     alert("delete " + id);
   };
   const handleDetail = (id) => {
-    alert("update " + id);
+    router.push(`/quan-ly/chi-tiet-don/${id}`);
   };
   const tableHooks = (hooks) => {
     hooks.visibleColumns.push((columns) => {

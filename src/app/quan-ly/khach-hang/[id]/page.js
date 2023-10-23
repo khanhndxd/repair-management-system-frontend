@@ -1,8 +1,10 @@
 "use client";
 import CustomerOrderTable from "@/components/pages/quan-ly/khach-hang/chi-tiet-khach-hang/CustomerOrderTable";
+import { showDialog } from "@/store/features/dialogSlice";
 import styles from "@/styles/main.module.scss";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 const activities = [
   { value: "", label: "Giao dịch" },
@@ -11,6 +13,7 @@ const activities = [
 
 export default function CustomerDetail() {
   const router = useRouter();
+  const dispatch = useDispatch();
   const [activity, setActivity] = useState("");
 
   const handleBack = () => {
@@ -22,8 +25,12 @@ export default function CustomerDetail() {
   };
 
   const handleAddRepairOrder = () => {
-    router.push(`/quan-ly/tiep-nhan-bao-hanh`)
-  }
+    router.push(`/quan-ly/tiep-nhan-bao-hanh`);
+  };
+
+  const handleUpdateCustomer = () => {
+    dispatch(showDialog({ title: "Chỉnh sửa thông tin khách hàng", content: "update-customer" }));
+  };
 
   return (
     <div className={styles["dashboard__customerdetail"]}>
@@ -34,7 +41,9 @@ export default function CustomerDetail() {
       <div className={styles["dashboard__customerdetail__basic"]}>
         <div className={styles["dashboard__customerdetail__basic__image"]}></div>
         <h2>Nguyễn Duy Khánh</h2>
-        <p>Chỉnh sửa</p>
+        <p style={{ cursor: "pointer" }} onClick={handleUpdateCustomer}>
+          Chỉnh sửa
+        </p>
       </div>
       <div className={styles["dashboard__customerdetail__info"]}>
         <div className={styles["dashboard__customerdetail__info__detail"]}>
@@ -80,7 +89,9 @@ export default function CustomerDetail() {
           <div className={styles["dashboard__customerdetail__info__activities__table"]}>
             <div className={styles["dashboard__customerdetail__info__activities__table__actions"]}>
               <h5>Danh sách tiếp nhận bảo hành</h5>
-              <button onClick={handleAddRepairOrder} className={styles["button"]}>Thêm đơn tiếp nhận bảo hành</button>
+              <button onClick={handleAddRepairOrder} className={styles["button"]}>
+                Thêm đơn tiếp nhận bảo hành
+              </button>
             </div>
             <CustomerOrderTable />
           </div>

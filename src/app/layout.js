@@ -1,9 +1,8 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import Link from "next/link";
-import styles from "@/styles/main.module.scss";
 import Providers from "./providers";
 import Notification from "@/components/common/Notification";
+import Dialog from "@/components/common/Dialog";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -17,6 +16,7 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Providers>
           <Notification />
+          <Dialog />
           {children}
         </Providers>
       </body>

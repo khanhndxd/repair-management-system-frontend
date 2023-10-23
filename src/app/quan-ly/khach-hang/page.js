@@ -1,6 +1,7 @@
 "use client";
+import NewCustomerForm from "@/components/common/NewCustomerForm";
 import CustomerTable from "@/components/pages/quan-ly/khach-hang/CustomerTable";
-import { showNotification } from "@/store/features/notificationSlice";
+import { showDialog } from "@/store/features/dialogSlice";
 import styles from "@/styles/main.module.scss";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
@@ -10,7 +11,7 @@ export default function Customers() {
   const router = useRouter();
 
   const handleAddCustomer = () => {
-    dispatch(showNotification({ message: "Bắt đầu tạo mới khách hàng", type: "info" }));
+    dispatch(showDialog({ title: "Tạo mới khách hàng", content: "add-customer"}));
   };
 
   return (
