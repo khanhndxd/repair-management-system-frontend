@@ -18,7 +18,7 @@ export default function Customers() {
       <h1>Quản lý khách hàng</h1>
       <div className={styles["dashboard__customers__actions"]}>
         <button onClick={handleAddCustomer} className={styles["button"]}>
-          + Tạo mới khách hàng
+          + Thêm mới khách hàng
         </button>
       </div>
       <div className={styles["dashboard__customers__content"]}>

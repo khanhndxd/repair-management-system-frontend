@@ -3,38 +3,64 @@
 import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-export default function CustomerTable() {
+const statuses = {
+  0: { content: "Chờ xử lý", color: "#c79a7b" },
+  1: { content: "Đang sửa chữa", color: "#ff9966" },
+  2: { content: "Đã sửa xong", color: "#ffcc00" },
+  3: { content: "Đã hủy", color: "#cc3300" },
+  4: { content: "Hoàn thành", color: "#99cc33" },
+  5: { content: "Đã trả hàng", color: "#3D7EC5" },
+};
+
+
+export default function CustomerOrderTable() {
   const router = useRouter();
+  const search = useSearchParams();
+
   const data = useMemo(() => {
     return [
       {
         id: 1,
-        name: "Nguyen Duy Khanh",
-        address: "123 asndoasndoasnod",
-        phone: "0123456789",
-        email: "khanh@gmail.com",
-      },
-      {
-        id: 2,
-        name: "Nguyen Van A",
-        address: "123 asndoasndoasnod",
-        phone: "04234234234",
-        email: "a@gmail.com",
+        status: 0,
+        created_by: "123 asndoasndoasnod",
+        repaired_by: "asdasdad",
+        created_at: "01/01/2024",
+        receive_at: "02/01/2024",
       },
     ];
-  }, []);
+  }, [search.get("status")]);
 
   const columns = useMemo(() => {
     return [
-      { Header: "Mã khách hàng", accessor: "id", Filter: ColumnFilter },
-      { Header: "Tên khách hàng", accessor: "name", Filter: ColumnFilter },
-      { Header: "Địa chỉ", accessor: "address", Filter: ColumnFilter },
-      { Header: "Số điện thoại", accessor: "phone", Filter: ColumnFilter },
-      { Header: "Email", accessor: "email", Filter: ColumnFilter },
+      { Header: "Mã phiếu", accessor: "id", Filter: ColumnFilter },
+      {
+        Header: "Trạng thái",
+        accessor: "status",
+        Cell: ({ value }) => {
+          return (
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                padding: "8px 0px",
+                backgroundColor: statuses[value].color,
+                fontWeight: "bold",
+              }}
+            >
+              {statuses[value].content}
+            </div>
+          );
+        },
+        Filter: StatusFilter,
+      },
+      { Header: "Người tạo", accessor: "created_by", Filter: ColumnFilter },
+      { Header: "Người tiếp nhận", accessor: "repaired_by", Filter: ColumnFilter },
+      { Header: "Ngày tạo", accessor: "created_at", Filter: ColumnFilter },
+      { Header: "Ngày trả hàng", accessor: "receive_at", Filter: ColumnFilter },
     ];
-  }, []);
+  }, [search.get("status")]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDetail = (id) => {
@@ -78,6 +104,14 @@ export default function CustomerTable() {
     {
       columns,
       data,
+      initialState: {
+        filters: [
+          {
+            id: "status",
+            value: search.get("status") || "",
+          },
+        ],
+      },
     },
     useFilters,
     useGlobalFilter,
@@ -171,5 +205,27 @@ const ColumnFilter = ({ column }) => {
         }}
       />
     </span>
+  );
+};
+
+const StatusFilter = ({ column }) => {
+  const { filterValue, setFilter } = column;
+  const router = useRouter();
+  const pathname = usePathname();
+
+  return (
+    <select
+      value={filterValue}
+      onChange={(e) => {
+        router.replace(`${pathname}?status=${e.target.value}`);
+      }}
+    >
+      <option value="">Tất cả</option>
+      {Object.entries(statuses).map(([value, label]) => (
+        <option key={value} value={value}>
+          {label.content}
+        </option>
+      ))}
+    </select>
   );
 };
