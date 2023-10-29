@@ -4,27 +4,19 @@ import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { useGetAllCustomersQuery } from "@/services/api/customer/customerApi";
+import Loading from "@/app/loading";
 
 export default function CustomerTable() {
+  const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
+
   const router = useRouter();
-  const data = useMemo(() => {
-    return [
-      {
-        id: 1,
-        name: "Nguyen Duy Khanh",
-        address: "123 asndoasndoasnod",
-        phone: "0123456789",
-        email: "khanh@gmail.com",
-      },
-      {
-        id: 2,
-        name: "Nguyen Van A",
-        address: "123 asndoasndoasnod",
-        phone: "04234234234",
-        email: "a@gmail.com",
-      },
-    ];
-  }, []);
+  const tableData = useMemo(() => {
+    if(isLoading === false) {
+      return data.data
+    }
+    return [];
+  }, [isLoading]);
 
   const columns = useMemo(() => {
     return [
@@ -34,11 +26,11 @@ export default function CustomerTable() {
       { Header: "Số điện thoại", accessor: "phone", Filter: ColumnFilter },
       { Header: "Email", accessor: "email", Filter: ColumnFilter },
     ];
-  }, []);
+  }, [isLoading]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDetail = (id) => {
-    router.push(`/quan-ly/khach-hang/${id}`)
+    router.push(`/quan-ly/khach-hang/${id}`);
   };
   const tableHooks = (hooks) => {
     hooks.visibleColumns.push((columns) => {
@@ -77,7 +69,7 @@ export default function CustomerTable() {
   } = useTable(
     {
       columns,
-      data,
+      data: tableData,
     },
     useFilters,
     useGlobalFilter,
@@ -85,6 +77,10 @@ export default function CustomerTable() {
     useSortBy,
     usePagination
   );
+
+  if (isError) return <div>An error has occurred!</div>;
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles["dashboard__customers__content__table-container"]}>

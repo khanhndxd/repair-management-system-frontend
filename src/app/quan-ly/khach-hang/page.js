@@ -11,7 +11,7 @@ export default function Customers() {
   const router = useRouter();
 
   const handleAddCustomer = () => {
-    dispatch(showDialog({ title: "Tạo mới khách hàng", content: "add-customer"}));
+    dispatch(showDialog({ title: "Tạo mới khách hàng", content: "add-customer" }));
   };
 
   return (

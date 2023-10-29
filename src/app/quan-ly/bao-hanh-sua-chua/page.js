@@ -4,13 +4,15 @@ import RepairOrderTable from "@/components/pages/quan-ly/bao-hanh-sua-chua/Repai
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { showNotification } from "@/store/features/notificationSlice";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 export default function Maintain() {
   const dispatch = useDispatch();
   const router = useRouter();
 
   const handleAddRepairOrder = () => {
-    router.push("/quan-ly/tiep-nhan-bao-hanh")
+    router.push("/quan-ly/tiep-nhan-bao-hanh");
     dispatch(showNotification({ message: "Bắt đầu tạo phiếu bảo hành", type: "info" }));
   };
 
@@ -23,7 +25,7 @@ export default function Maintain() {
         </button>
       </div>
       <div className={styles["dashboard__orders__content"]}>
-        <RepairOrderTable />
+          <RepairOrderTable />
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
-"use client";
+// "use client";
 // import "regenerator-runtime/runtime";
 import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Loading from "@/app/loading";
 
 const statuses = {
   0: { content: "Chờ xử lý", color: "#c79a7b" },
