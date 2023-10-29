@@ -1,27 +1,19 @@
+"use client"
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import styles from "@/styles/main.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { addCustomer } from "@/store/features/customerSlice";
-
-const customers = [
-  { name: "Khách hàng 1", phone: "0123456789" },
-  { name: "Khách hàng 2", phone: "0987654321" },
-  { name: "Khách hàng 3", phone: "0987654321" },
-  { name: "Khách hàng 4", phone: "0987654321" },
-  { name: "Khách hàng 5", phone: "0987654321" },
-  { name: "Khách hàng 6", phone: "0987654321" },
-  { name: "Khách hàng 7", phone: "0987654321" },
-  { name: "Khách hàng 8", phone: "0987654321" },
-  { name: "Khách hàng 9", phone: "0987654321" },
-  { name: "Khách hàng 10", phone: "0987654321" },
-];
+import Loading from "@/app/loading";
+import { useGetAllCustomersQuery } from "@/services/api/customer/customerApi";
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
 export default function CustomerForm({ control }) {
+  const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
+
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.customer);
   const [suggestions, setSuggestions] = useState([]);
@@ -31,13 +23,17 @@ export default function CustomerForm({ control }) {
     const value = e.target.value;
     setInputValue(value);
     const lowerCaseValue = removeAccents(value.toLowerCase());
-    const newSuggestions = customers.filter(
+    const newSuggestions = data?.data.filter(
       (customer) =>
         removeAccents(customer.name.toLowerCase()).includes(lowerCaseValue) ||
         removeAccents(customer.phone.toLowerCase()).includes(lowerCaseValue)
     );
     setSuggestions(newSuggestions);
   };
+
+  if (isError) return <div>An error has occurred!</div>;
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles["dashboard__neworder__content__info__box__customer"]}>

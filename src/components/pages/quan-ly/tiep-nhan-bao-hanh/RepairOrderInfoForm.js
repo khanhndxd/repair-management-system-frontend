@@ -1,8 +1,15 @@
 "use client";
+import Loading from "@/app/loading";
+import { useGetRepairDataQuery } from "@/services/api/repairData/repairDataApi";
 import styles from "@/styles/main.module.scss";
 
 export default function RepairOrderInfoForm(props) {
+  const { data, isLoading, isFetching, isError } = useGetRepairDataQuery();
   const { register, errors } = props;
+
+  if (isError) return <div>An error has occurred!</div>;
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles["new-order-info"]}>
@@ -42,24 +49,25 @@ export default function RepairOrderInfoForm(props) {
       <div className={styles["new-order-info__control"]}>
         <label htmlFor="repair-type">Lý do bảo hành</label>
         <select id="repair-type" {...register("repair-type")}>
-          <option value="failure">Sản phẩm lỗi</option>
-          <option value="change">Đổi hàng mới</option>
-          <option value="other">Lý do khác</option>
+          {data?.repairReasons.data.map((item) => {
+            return <option key={item.id} value={item.id}>{item.reason}</option>;
+          })}
         </select>
       </div>
       <div className={styles["new-order-info__control"]}>
         <label htmlFor="repair-type">Loại sửa chữa</label>
         <select id="repair-type" {...register("repair-type")}>
-          <option value="failure">Sửa chữa</option>
-          <option value="change">Bảo dưỡng</option>
+          {data?.repairTypes.data.map((item) => {
+            return <option key={item.id} value={item.id}>{item.name}</option>;
+          })}
         </select>
       </div>
       <div className={styles["new-order-info__control"]}>
         <label htmlFor="repair-type">Công việc</label>
         <select id="repair-type" {...register("repair-type")}>
-          <option value="failure">Thay màn hình</option>
-          <option value="change">Vệ sinh máy tính</option>
-          <option value="change">Thay ram</option>
+          {data?.tasks.data.map((item) => {
+            return <option key={item.id} value={item.id}>{item.name}</option>;
+          })}
         </select>
       </div>
     </div>

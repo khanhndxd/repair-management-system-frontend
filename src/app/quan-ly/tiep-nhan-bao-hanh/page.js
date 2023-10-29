@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import styles from "@/styles/main.module.scss";
 import { useDispatch } from "react-redux";
 import { showNotification } from "@/store/features/notificationSlice";
@@ -9,6 +8,8 @@ import { format } from "date-fns";
 import CustomerForm from "@/components/pages/quan-ly/tiep-nhan-bao-hanh/CustomerForm";
 import RepairList from "@/components/pages/quan-ly/tiep-nhan-bao-hanh/RepairList";
 import { useRouter } from "next/navigation";
+import { Suspense } from "react";
+import Loading from "@/app/loading";
 
 export default function NewRepairOrder() {
   const dispatch = useDispatch();
@@ -52,7 +53,9 @@ export default function NewRepairOrder() {
             </div>
             <div className={styles["dashboard__neworder__content__info__box"]}>
               <h3>&#10113; Thông tin đơn</h3>
-              <RepairOrderInfoForm register={register} errors={errors} />
+              <Suspense fallback={<Loading />}>
+                <RepairOrderInfoForm register={register} errors={errors} />
+              </Suspense>
             </div>
           </div>
           <div className={styles["dashboard__neworder__content__product"]}>
@@ -63,7 +66,7 @@ export default function NewRepairOrder() {
             </div>
             <RepairList />
             <p style={{ marginLeft: "auto" }}>
-              Tổng chi phí: <strong style={{fontSize:"24px"}}>999.999đ</strong>
+              Tổng chi phí: <strong style={{ fontSize: "24px" }}>999.999đ</strong>
             </p>
           </div>
           <div className={styles["dashboard__neworder__content__info"]}>
@@ -74,7 +77,7 @@ export default function NewRepairOrder() {
                 name="ghi-chu"
                 rows="10"
                 cols="50"
-                defaultValue={"asdasdasdasdasdasdasdasdasd"}
+                placeholder="Nhập ghi chú"
               />
             </div>
           </div>
