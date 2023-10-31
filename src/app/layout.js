@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import Providers from "./providers";
 import Notification from "@/components/common/Notification";
 import Dialog from "@/components/common/Dialog";
+import LoadingAsync from "@/components/common/LoadingAsync";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
@@ -17,6 +18,7 @@ export default function RootLayout({ children }) {
         <Providers>
           <Notification />
           <Dialog />
+          <LoadingAsync />
           {children}
         </Providers>
       </body>

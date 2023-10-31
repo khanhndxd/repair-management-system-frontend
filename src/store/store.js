@@ -4,6 +4,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import notificationReducer from "./features/notificationSlice";
 import customerReducer from "./features/customerSlice";
 import dialogReducer from "./features/dialogSlice";
+import loadingAsyncReducer from "./features/loadingAsyncSlice";
 import { baseApi } from "@/services/api/baseApi";
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     notification: notificationReducer,
     dialog: dialogReducer,
     customer: customerReducer,
+    loadingAsync: loadingAsyncReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
