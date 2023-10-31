@@ -31,7 +31,7 @@ export default function CustomerForm({ control }) {
     setSuggestions(newSuggestions);
   };
 
-  if (isError) return <div>An error has occurred!</div>;
+  if (isError) return <div>Có lỗi xảy ra!</div>;
 
   if (isLoading) return <Loading />;
 

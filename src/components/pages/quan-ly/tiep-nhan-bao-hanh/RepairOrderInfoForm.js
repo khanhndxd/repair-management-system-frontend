@@ -7,7 +7,7 @@ export default function RepairOrderInfoForm(props) {
   const { data, isLoading, isFetching, isError } = useGetRepairDataQuery();
   const { register, errors } = props;
 
-  if (isError) return <div>An error has occurred!</div>;
+  if (isError) return <div>Có lỗi xảy ra!</div>;
 
   if (isLoading) return <Loading />;
 
@@ -47,8 +47,8 @@ export default function RepairOrderInfoForm(props) {
         <input type="text" id="return-type" {...register("return-type")} />
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="repair-type">Lý do bảo hành</label>
-        <select id="repair-type" {...register("repair-type")}>
+        <label htmlFor="repair-reason">Lý do bảo hành</label>
+        <select id="repair-reason" {...register("repair-reason")}>
           {data?.repairReasons.data.map((item) => {
             return <option key={item.id} value={item.id}>{item.reason}</option>;
           })}
@@ -63,8 +63,8 @@ export default function RepairOrderInfoForm(props) {
         </select>
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="repair-type">Công việc</label>
-        <select id="repair-type" {...register("repair-type")}>
+        <label htmlFor="task">Công việc</label>
+        <select id="task" {...register("task")}>
           {data?.tasks.data.map((item) => {
             return <option key={item.id} value={item.id}>{item.name}</option>;
           })}

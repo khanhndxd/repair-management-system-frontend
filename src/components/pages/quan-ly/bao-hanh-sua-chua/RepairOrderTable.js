@@ -1,37 +1,36 @@
-// "use client";
+"use client";
 // import "regenerator-runtime/runtime";
 import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/app/loading";
+import { useGetAllRepairOrdersQuery } from "@/services/api/repairOrder/repairOrderApi";
+import { useGetAllStatusesQuery } from "@/services/api/status/statusApi";
 
 const statuses = {
-  0: { content: "Chờ xử lý", color: "#c79a7b" },
-  1: { content: "Đang sửa chữa", color: "#ff9966" },
-  2: { content: "Đã sửa xong", color: "#ffcc00" },
-  3: { content: "Đã hủy", color: "#cc3300" },
-  4: { content: "Hoàn thành", color: "#99cc33" },
-  5: { content: "Đã trả hàng", color: "#3D7EC5" },
+  1: { content: "Chờ xử lý", color: "#3D7EC5" },
+  2: { content: "Đã tiếp nhận", color: "#3D7EC5" },
+  3: { content: "Đang sửa chữa", color: "#3D7EC5" },
+  4: { content: "Đã chuyển sản phẩm về hãng", color: "#3D7EC5" },
+  5: { content: "Đã nhận sản phẩm từ hãng", color: "#3D7EC5" },
+  6: { content: "Đã sửa xong", color: "#3D7EC5" },
+  7: { content: "Đã hủy", color: "#3D7EC5" },
+  8: { content: "Đã hoàn thành", color: "#3D7EC5" },
+  9: { content: "Đã trả hàng", color: "#3D7EC5" },
 };
 
 export default function RepairOrderTable() {
+  const { data, isLoading, isFetching, isError } = useGetAllRepairOrdersQuery();
   const search = useSearchParams();
   const router = useRouter();
 
-  const data = useMemo(() => {
-    return [
-      {
-        id: 1,
-        customer: "test 1",
-        status: 0,
-        created_by: "Khanh",
-        repaired_by: "ABC",
-        created_at: "01/01/2024",
-        receive_at: "02/01/2024",
-      },
-    ];
-  }, [search.get("status")]);
+  const tableData = useMemo(() => {
+    if (isLoading === false) {
+      return data.data;
+    }
+    return [];
+  }, [search.get("status"), isLoading]);
 
   const columns = useMemo(() => {
     return [
@@ -47,7 +46,6 @@ export default function RepairOrderTable() {
                 width: "100%",
                 height: "100%",
                 padding: "8px 0px",
-                backgroundColor: statuses[value].color,
                 fontWeight: "bold",
               }}
             >
@@ -62,7 +60,7 @@ export default function RepairOrderTable() {
       { Header: "Ngày tạo", accessor: "created_at", Filter: ColumnFilter },
       { Header: "Ngày trả hàng", accessor: "receive_at", Filter: ColumnFilter },
     ];
-  }, [search.get("status")]);
+  }, [search.get("status"), isLoading]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDelete = (id) => {
@@ -116,7 +114,7 @@ export default function RepairOrderTable() {
   } = useTable(
     {
       columns,
-      data,
+      data: tableData,
       initialState: {
         filters: [
           {
@@ -132,6 +130,10 @@ export default function RepairOrderTable() {
     useSortBy,
     usePagination
   );
+
+  if (isError) return <div>An error has occurred!</div>;
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles["dashboard__orders__content__table-container"]}>
@@ -250,8 +252,13 @@ const ColumnFilter = ({ column }) => {
 
 const StatusFilter = ({ column }) => {
   const { filterValue, setFilter } = column;
+  const { data, isLoading, isFetching, isError } = useGetAllStatusesQuery();
   const router = useRouter();
   const pathname = usePathname();
+
+  if (isError) return <div>An error has occurred!</div>;
+
+  if (isLoading) return <Loading />;
 
   return (
     <select
@@ -261,9 +268,9 @@ const StatusFilter = ({ column }) => {
       }}
     >
       <option value="">Tất cả</option>
-      {Object.entries(statuses).map(([value, label]) => (
-        <option key={value} value={value}>
-          {label.content}
+      {data?.data.map((item) => (
+        <option key={item.id} value={item.id}>
+          {item.name}
         </option>
       ))}
     </select>
