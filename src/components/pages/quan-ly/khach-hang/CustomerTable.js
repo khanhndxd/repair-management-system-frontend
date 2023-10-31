@@ -16,7 +16,7 @@ export default function CustomerTable() {
       return data.data
     }
     return [];
-  }, [isLoading]);
+  }, [isLoading, isFetching]);
 
   const columns = useMemo(() => {
     return [
@@ -26,7 +26,7 @@ export default function CustomerTable() {
       { Header: "Số điện thoại", accessor: "phone", Filter: ColumnFilter },
       { Header: "Email", accessor: "email", Filter: ColumnFilter },
     ];
-  }, [isLoading]);
+  }, [isLoading, isFetching]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDetail = (id) => {
@@ -78,7 +78,7 @@ export default function CustomerTable() {
     usePagination
   );
 
-  if (isError) return <div>An error has occurred!</div>;
+  if (isError) return <div>Có lỗi xảy ra!</div>;
 
   if (isLoading) return <Loading />;
 
