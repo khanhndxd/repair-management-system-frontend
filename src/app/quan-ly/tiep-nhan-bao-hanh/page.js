@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import styles from "@/styles/main.module.scss";
 import { useDispatch } from "react-redux";
 import { showNotification } from "@/store/features/notificationSlice";
@@ -26,7 +26,10 @@ export default function NewRepairOrder() {
       "created-date": format(new Date(), "yyyy-MM-dd"),
       "received-date": format(new Date(), "yyyy-MM-dd"),
       "return-type": "",
-      "repair-type": "",
+      "repair-type": null,
+      "repair-reason": null,
+      task: null,
+      note:""
     },
   });
 
@@ -53,9 +56,7 @@ export default function NewRepairOrder() {
             </div>
             <div className={styles["dashboard__neworder__content__info__box"]}>
               <h3>&#10113; Thông tin đơn</h3>
-              <Suspense fallback={<Loading />}>
-                <RepairOrderInfoForm register={register} errors={errors} />
-              </Suspense>
+              <RepairOrderInfoForm register={register} errors={errors} />
             </div>
           </div>
           <div className={styles["dashboard__neworder__content__product"]}>
@@ -72,13 +73,7 @@ export default function NewRepairOrder() {
           <div className={styles["dashboard__neworder__content__info"]}>
             <div className={styles["dashboard__neworder__content__info__box"]}>
               <h3>&#10115; Ghi chú</h3>
-              <textarea
-                id="ghi-chu"
-                name="ghi-chu"
-                rows="10"
-                cols="50"
-                placeholder="Nhập ghi chú"
-              />
+              <textarea id="ghi-chu" name="ghi-chu" rows="10" cols="50" placeholder="Nhập ghi chú" {...register("note")} />
             </div>
           </div>
         </div>

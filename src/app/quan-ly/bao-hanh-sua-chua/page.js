@@ -1,11 +1,9 @@
-"use client";
+"use client"
 import styles from "@/styles/main.module.scss";
 import RepairOrderTable from "@/components/pages/quan-ly/bao-hanh-sua-chua/RepairOrderTable";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 import { showNotification } from "@/store/features/notificationSlice";
-import { Suspense } from "react";
-import Loading from "@/app/loading";
 
 export default function Maintain() {
   const dispatch = useDispatch();
