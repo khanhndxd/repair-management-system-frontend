@@ -15,7 +15,8 @@
         gap:20px;
         background-color: #fff;
         border-radius: 10px;
-        width: 450px;
+        border: 1px solid #ccc;
+        width: 550px;
         padding: 20px;
         & > h1 {
             font-size: 18px;
@@ -37,6 +38,7 @@
             } 
             &__actions {
                 @include abstracts.display-flex-row;
+                margin-top: auto;
                 align-items: center;
             }
             &--hidden {

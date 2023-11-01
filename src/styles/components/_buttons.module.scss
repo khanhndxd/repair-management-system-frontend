@@ -28,6 +28,11 @@
         color:#fff;
         border: none;
     }
+    &--disabled {
+        @extend .button-outline;
+        pointer-events: none;
+        opacity: 0.3;
+    }
 }
 
 .button-fit-content {
