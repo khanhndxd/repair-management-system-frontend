@@ -3,10 +3,12 @@ import styles from "@/styles/main.module.scss";
 import { useSelector } from "react-redux";
 import NewCustomerForm from "./NewCustomerForm";
 import UpdateCustomerForm from "./UpdateCustomerForm.";
+import AddPurchasedProductForm from "./AddPurchasedProductForm";
 
 const content = {
   "add-customer": <NewCustomerForm />,
   "update-customer": <UpdateCustomerForm />,
+  "add-purchased-product": <AddPurchasedProductForm />,
 };
 
 export default function Dialog(props) {

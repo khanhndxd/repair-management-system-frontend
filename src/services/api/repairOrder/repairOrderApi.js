@@ -5,7 +5,10 @@ const repairOrderApi = baseApi.injectEndpoints({
     getAllRepairOrders: build.query({
       query: () => '/RepairOrder/GetAll',
     }),
+    getRepairOrderByCustomerId: build.query({
+      query: (id) => `/RepairOrder/Customer/${id}`,
+    }),
   }),
 })
 
-export const { useGetAllRepairOrdersQuery } = repairOrderApi
+export const { useGetAllRepairOrdersQuery, useGetRepairOrderByCustomerIdQuery } = repairOrderApi

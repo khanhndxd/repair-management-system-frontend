@@ -16,28 +16,28 @@ export default function RepairOrderInfoForm(props) {
 
   const handleTaskChange = (e) => {
     let task;
-    if (data?.tasks) {
+    if (data.tasks) {
       for (let i = 0; i < data.tasks.data.length; i++) {
-        if (data.tasks.data[i].id === e.target.value) {
+        if (data.tasks.data[i].id === +e.target.value) {
           task = data.tasks.data[i];
           break;
         }
       }
     }
-    dispatch(addTask(task));
+    dispatch(addTask({ object: task }));
   };
 
   const handleRepairTypeChange = (e) => {
     let repairType;
-    if (data?.repairTypes) {
+    if (data.repairTypes) {
       for (let i = 0; i < data.repairTypes.data.length; i++) {
-        if (data.repairTypes.data[i].id === e.target.value) {
+        if (data.repairTypes.data[i].id === +e.target.value) {
           repairType = data.repairTypes.data[i];
           break;
         }
       }
     }
-    dispatch(addRepairType(repairType));
+    dispatch(addRepairType({ object: repairType }));
   };
 
   return (

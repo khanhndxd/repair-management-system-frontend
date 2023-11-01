@@ -4,14 +4,16 @@ import { useTable } from "react-table";
 import { useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "@/store/features/notificationSlice";
+import { showDialog } from "@/store/features/dialogSlice";
+import { removeTasksProducts } from "@/store/features/repairOrderSlice";
 
 export default function RepairList() {
   const repairOrder = useSelector((state) => state.repairOrder);
   const dispatch = useDispatch();
 
   const data = useMemo(() => {
-    return [];
-  }, []);
+    return repairOrder.tasksProducts;
+  }, [repairOrder.tasksProducts]);
 
   const columns = useMemo(() => {
     return [
@@ -19,11 +21,11 @@ export default function RepairList() {
       { Header: "Tên sản phẩm/Công việc", accessor: "name" },
       { Header: "Mô tả", accessor: "description" },
     ];
-  }, []);
+  }, [repairOrder.tasksProducts]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDelete = (id) => {
-    alert("delete " + id);
+    dispatch(removeTasksProducts({ id: id }));
   };
 
   const tableHooks = (hooks) => {
@@ -35,7 +37,11 @@ export default function RepairList() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleDelete(row.values.id)} className={styles["button"]}>
+              <button
+                onClick={() => handleDelete(row.values.id)}
+                className={styles["no-effect-button"]}
+                style={{ fontWeight: "bold", textDecoration: "underline", fontSize: "16px" }}
+              >
                 Xóa
               </button>
             );
@@ -56,16 +62,32 @@ export default function RepairList() {
   const handleAddPurchasedProduct = () => {
     if (repairOrder.customer === null) {
       dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      return;
     }
+    dispatch(
+      showDialog({
+        title: `Chọn sản phẩm đã mua của khách hàng ${repairOrder.customer?.name}`,
+        content: "add-purchased-product",
+      })
+    );
   };
-
+  
   return (
     <>
       <div className={styles["dashboard__neworder__content__product__actions"]}>
-        <button type="button" onClick={handleAddPurchasedProduct} className={styles["button-outline"]}>
+        <button
+          type="button"
+          onClick={handleAddPurchasedProduct}
+          className={
+            repairOrder.anyProduct === true ? styles["button-outline--disabled"] : styles["button-outline"]
+          }
+          disabled={repairOrder.anyProduct === true}
+        >
           Chọn sản phẩm đã mua
         </button>
-        <button type="button" className={styles["button-outline"]}>Tạo mới sản phẩm</button>
+        <button type="button" className={styles["button-outline"]}>
+          Tạo mới sản phẩm
+        </button>
       </div>
       <div className={styles["dashboard__neworder__content__product__table-container"]}>
         <table {...getTableProps()}>

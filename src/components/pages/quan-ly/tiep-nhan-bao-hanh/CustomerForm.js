@@ -14,7 +14,7 @@ function removeAccents(str) {
 export default function CustomerForm({ control, errors }) {
   const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
   const dispatch = useDispatch();
-  const customer = useSelector((state) => state.customer);
+  const customer = useSelector((state) => state.repairOrder.customer);
   const [suggestions, setSuggestions] = useState([]);
   const [inputValue, setInputValue] = useState("");
 
