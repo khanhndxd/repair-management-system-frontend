@@ -9,8 +9,10 @@ import CustomerForm from "./CustomerForm";
 import RepairOrderInfoForm from "./RepairOrderInfoForm";
 import RepairList from "./RepairList";
 import { format } from "date-fns";
+import { useAddRepairOrderMutation } from "@/services/api/repairOrder/repairOrderApi";
 
 export default function RepairOrderForm() {
+  const [addRepairOrder, {isLoading}] = useAddRepairOrderMutation();
   const repairOrder = useSelector((state) => state.repairOrder);
   const dispatch = useDispatch();
   const router = useRouter();
@@ -21,22 +23,41 @@ export default function RepairOrderForm() {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      creator: "123",
-      receiver: "",
-      "created-date": format(new Date(), "yyyy-MM-dd"),
-      "received-date": format(new Date(), "yyyy-MM-dd"),
-      "return-type": "",
-      "repair-type": null,
-      "repair-reason": null,
+      creator: "1",
+      receiver: null,
+      createdDate: format(new Date(), "yyyy-MM-dd"),
+      receiveDate: format(new Date(), "yyyy-MM-dd"),
+      receiveType: "",
+      repairType: null,
+      repairReason: null,
       task: null,
       note: "",
     },
   });
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     console.log(data);
+    console.log(repairOrder.tasksProducts);
+    let payload = {
+      CustomerId: +data.customer.id,
+      CreatedById: data.creator,
+      RepairedById: data.receiver,
+      CreatedAt: data.createdDate,
+      ReceiveAt: data.receiveDate,
+      ReceiveType: data.receiveType,
+      TotalPrice: repairOrder.total,
+      StatusId: 1,
+      RepairTypeId: +data.repairType,
+      RepairReasonId: +data.repairReason,
+      TaskId: +data.task,
+      Note: data.note,
+      ProductId: 1,
+      ProductDescription: "test",
+    };
+    const result = await addRepairOrder(payload);
+    console.log(result)
     dispatch(showNotification({ message: "Tạo phiếu thành công", type: "success" }));
-    router.push("/quan-ly/chi-tiet-don/1");
+    // router.push("/quan-ly/chi-tiet-don/1");
   };
 
   return (

@@ -44,40 +44,47 @@ export default function RepairOrderInfoForm(props) {
     <div className={styles["new-order-info"]}>
       <div className={styles["new-order-info__control"]}>
         <label htmlFor="creator">Người tạo phiếu</label>
-        <input type="text" id="creator" {...register("creator")} />
-      </div>
-      <div className={styles["new-order-info__control"]}>
-        <label htmlFor="receiver">Người tiếp nhận</label>
-        <select id="receiver" {...register("receiver")}>
-          <option value="1">Nguyễn Duy Khánh</option>
-          <option value="2">Nguyễn Văn A</option>
+        <select disabled id="creator" {...register("creator", { required: true })}>
+          <option value="1">Nguyễn Duy Khánh</option>
         </select>
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="created-date">Ngày tiếp nhận</label>
+        <label htmlFor="receiver">Người tiếp nhận</label>
+        <select id="receiver" {...register("receiver", { required: true })}>
+          <option value="1">Nguyễn Duy Khánh</option>
+          <option value="2">Nguyễn Hoàng A</option>
+        </select>
+        {errors["receiver"] && (
+          <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
+            Không được để trống người tiếp nhận
+          </span>
+        )}
+      </div>
+      <div className={styles["new-order-info__control"]}>
+        <label htmlFor="createdDate">Ngày tiếp nhận</label>
         <input
           type="date"
-          id="created-date"
+          id="createdDate"
           pattern="dd/mm/yyyy"
-          {...register("created-date", { valueAsDate: true })}
+          {...register("createdDate", { valueAsDate: true })}
         />
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="received-date">Ngày trả hàng (dự kiến)</label>
+        <label htmlFor="receiveDate">Ngày trả hàng (dự kiến)</label>
         <input
           type="date"
-          id="received-date"
+          id="receiveDate"
           pattern="dd/mm/yyyy"
-          {...register("received-date", { valueAsDate: true })}
+          {...register("receiveDate", { valueAsDate: true })}
         />
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="return-type">Hình thức trả hàng</label>
-        <input type="text" id="return-type" {...register("return-type")} />
+        <label htmlFor="receiveType">Hình thức trả hàng</label>
+        <input type="text" id="receiveType" {...register("receiveType")} />
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="repair-reason">Lý do bảo hành (*)</label>
-        <select id="repair-reason" {...register("repair-reason", { required: true })}>
+        <label htmlFor="repairReason">Lý do bảo hành (*)</label>
+        <select id="repairReason" {...register("repairReason", { required: true })}>
           {data?.repairReasons.data.map((item) => {
             return (
               <option key={item.id} value={item.id}>
@@ -86,17 +93,17 @@ export default function RepairOrderInfoForm(props) {
             );
           })}
         </select>
-        {errors["repair-reason"] && (
+        {errors["repairReason"] && (
           <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
             Không được để trống lý do bảo hành
           </span>
         )}
       </div>
       <div className={styles["new-order-info__control"]}>
-        <label htmlFor="repair-type">Loại sửa chữa (*)</label>
+        <label htmlFor="repairType">Loại sửa chữa (*)</label>
         <select
-          id="repair-type"
-          {...register("repair-type", { required: true, onChange: (e) => handleRepairTypeChange(e) })}
+          id="repairType"
+          {...register("repairType", { required: true, onChange: (e) => handleRepairTypeChange(e) })}
         >
           {data?.repairTypes.data.map((item) => {
             return (
@@ -106,7 +113,7 @@ export default function RepairOrderInfoForm(props) {
             );
           })}
         </select>
-        {errors["repair-type"] && (
+        {errors["repairType"] && (
           <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
             Không được để trống loại sửa chữa
           </span>
