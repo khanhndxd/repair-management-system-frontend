@@ -27,7 +27,8 @@ export default function RepairOrderTable() {
 
   const tableData = useMemo(() => {
     if (isLoading === false) {
-      return data.data;
+      let newData = preprocessingRepairOrderData(data)
+      return newData;
     }
     return [];
   }, [search.get("status"), isLoading]);
@@ -47,6 +48,7 @@ export default function RepairOrderTable() {
                 height: "100%",
                 padding: "8px 0px",
                 fontWeight: "bold",
+                backgroundColor: statuses[value].color
               }}
             >
               {statuses[value].content}
@@ -79,11 +81,11 @@ export default function RepairOrderTable() {
           Cell: ({ row }) => {
             return (
               <>
-                <button onClick={() => handleDetail(row.values.id)} className={styles["button"]}>
+                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
                   Xem chi tiết
                 </button>
-                |
-                <button onClick={() => handleDelete(row.values.id)} className={styles["button"]}>
+                &nbsp;|&nbsp;
+                <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
                   Xóa
                 </button>
               </>
@@ -275,4 +277,19 @@ const StatusFilter = ({ column }) => {
       ))}
     </select>
   );
+};
+
+const preprocessingRepairOrderData = (data) => {
+  let result = data.data.map((item) => {
+    return {
+      id: item.id,
+      customer: item.customer.name,
+      status: item.status.id,
+      created_by: item.createdBy.userName,
+      repaired_by: item.repairedBy.userName,
+      created_at: new Date(item.createdAt).toLocaleDateString(),
+      receive_at: new Date(item.receiveAt).toLocaleDateString(),
+    };
+  });
+  return result;
 };
