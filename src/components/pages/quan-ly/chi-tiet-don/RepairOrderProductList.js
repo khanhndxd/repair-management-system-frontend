@@ -3,15 +3,12 @@ import styles from "@/styles/main.module.scss";
 import { useTable } from "react-table";
 import { useMemo } from "react";
 
-export default function RepairOrderProductList() {
+export default function RepairOrderProductList(props) {
+  const { repairProduct, task } = props;
+
   const data = useMemo(() => {
-    return [
-      {
-        id: 1,
-        name: "test 1",
-        description: "ajkshdjkasdaskldhaskldhaskldhaskdhkashdkjashdjkashdjk",
-      },
-    ];
+    const processedData = preprocessingProductListData(repairProduct, task);
+    return processedData;
   }, []);
 
   const columns = useMemo(() => {
@@ -27,31 +24,30 @@ export default function RepairOrderProductList() {
     alert("delete " + id);
   };
 
-  const tableHooks = (hooks) => {
-    hooks.visibleColumns.push((columns) => {
-      return [
-        ...columns,
-        {
-          id: "update",
-          Header: "Thao tác",
-          Cell: ({ row }) => {
-            return (
-              <button onClick={() => handleDelete(row.values.id)} className={styles["button"]}>
-                Xóa
-              </button>
-            );
-          },
-        },
-      ];
-    });
-  };
+  // const tableHooks = (hooks) => {
+  //   hooks.visibleColumns.push((columns) => {
+  //     return [
+  //       ...columns,
+  //       {
+  //         id: "update",
+  //         Header: "Thao tác",
+  //         Cell: ({ row }) => {
+  //           return (
+  //             <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
+  //               Xóa
+  //             </button>
+  //           );
+  //         },
+  //       },
+  //     ];
+  //   });
+  // };
 
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
     {
       columns,
       data,
     },
-    tableHooks
   );
 
   return (
@@ -98,3 +94,16 @@ export default function RepairOrderProductList() {
     </div>
   );
 }
+
+const preprocessingProductListData = (product, task) => {
+  let result = product.map((item) => {
+    return {
+      id: item.purchasedProduct.productSerial,
+      name: item.purchasedProduct.productName,
+      description: item.description,
+    };
+  });
+  result.push({ id: task.id, name: task.name, description: "" });
+
+  return result;
+};
