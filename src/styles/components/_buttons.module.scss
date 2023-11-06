@@ -16,6 +16,15 @@
     & > span {
         font-size: 15px;
     }
+    &--light {
+        @extend .button;
+        background-color: #5dac51;
+    }
+    &--disabled {
+        @extend .button;
+        pointer-events: none;
+        opacity: 0.3;
+    }
 }
 
 .button-outline { 
