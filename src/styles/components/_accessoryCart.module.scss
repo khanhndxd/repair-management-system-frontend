@@ -1,0 +1,50 @@
+@use "../abstracts/index.module" as abstracts;
+
+.accessory-cart {
+    @include abstracts.display-flex-column;
+    justify-content: center;
+    font-size: 12px;
+    &__item {
+        @include abstracts.display-grid;
+        grid-template-columns: 1fr 2fr 1fr 2fr 2fr;
+        align-items: center;
+        &__header {
+            background-color: #ccc;
+            border: 1px solid gray;
+            padding: 5px;
+            text-align: center;
+        }
+        &__content {
+            @include abstracts.display-flex-column;
+            height: 100%;
+            border: 1px solid #ccc;
+            padding: 5px;
+            align-items: center;
+            justify-content: center;
+            user-select: none;
+            &--action {
+                @extend .accessory-cart__item__content;
+                cursor: pointer;
+                &:hover {
+                    background-color: gray;
+                    color: white;
+                }
+            }
+            &--quantity {
+                @extend .accessory-cart__item__content;
+                @include abstracts.display-flex-row;
+                gap: 5px;
+                align-items: center;
+                & > span {
+                    cursor: pointer;
+                    padding: 4px 8px;
+                    background-color: gray;
+                    color: #ffffff;
+                    font-weight: bold;
+                    border-radius: 5px;
+                    font-size: 16px;
+                }
+            }
+        }
+    }
+}
