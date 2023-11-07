@@ -11,12 +11,12 @@ function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-export default function CustomerForm({ control, errors }) {
+export default function CustomerForm({ control, errors, getValues }) {
   const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.repairOrder.customer);
   const [suggestions, setSuggestions] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(getValues("customer")?.name || "");
 
   const handleInputChange = (e) => {
     const value = e.target.value;
@@ -39,7 +39,6 @@ export default function CustomerForm({ control, errors }) {
       <Controller
         control={control}
         name="customer"
-        defaultValue={""}
         rules={{ required: true }}
         render={({ field }) => (
           <div className={styles["customer__control"]}>
