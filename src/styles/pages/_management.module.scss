@@ -337,7 +337,8 @@
             }
             &__actions {
                 @include abstracts.display-flex-row;
-                align-items: center;
+                align-items: flex-end;
+                gap:5px;
                 &__buttons {
                     @include abstracts.display-flex-row;
                     align-items: center;
