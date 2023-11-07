@@ -6,6 +6,7 @@ import RepairActions from "@/components/pages/quan-ly/chi-tiet-don/RepairActions
 import RepairOrderDetailInfo from "@/components/pages/quan-ly/chi-tiet-don/RepairOrderDetailInfo";
 import { useGetRepairOrderByIdQuery } from "@/services/api/repairOrder/repairOrderApi";
 import styles from "@/styles/main.module.scss";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 
 export default function RepairOrderDetail() {
@@ -29,6 +30,7 @@ export default function RepairOrderDetail() {
       </div>
       <div className={styles["dashboard__orderdetail__actions"]}>
         <h2>{params.id} - Phiếu tiếp nhận bảo hành</h2>
+        <Link href={`/quan-ly/chi-tiet-don/chinh-sua/${params.id}`}>Chỉnh sửa</Link>
         <RepairActions
           customer={data.data.customer}
           createdAt={data.data.createdAt}
