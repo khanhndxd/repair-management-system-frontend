@@ -6,30 +6,24 @@ import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 const statuses = {
-  0: { content: "Chờ xử lý", color: "#c79a7b" },
-  1: { content: "Đang sửa chữa", color: "#ff9966" },
-  2: { content: "Đã sửa xong", color: "#ffcc00" },
-  3: { content: "Đã hủy", color: "#cc3300" },
-  4: { content: "Hoàn thành", color: "#99cc33" },
-  5: { content: "Đã trả hàng", color: "#3D7EC5" },
+  1: { content: "Chờ xử lý", color: "#3D7EC5" },
+  2: { content: "Đã tiếp nhận", color: "#3D7EC5" },
+  3: { content: "Đang sửa chữa", color: "#3D7EC5" },
+  4: { content: "Đã chuyển sản phẩm về hãng", color: "#3D7EC5" },
+  5: { content: "Đã nhận sản phẩm từ hãng", color: "#3D7EC5" },
+  6: { content: "Đã sửa xong", color: "#3D7EC5" },
+  7: { content: "Đã hủy", color: "#3D7EC5" },
+  8: { content: "Đã hoàn thành", color: "#3D7EC5" },
+  9: { content: "Đã trả hàng", color: "#3D7EC5" },
 };
 
-
-export default function CustomerOrderTable() {
+export default function CustomerOrderTable(props) {
+  const { repairOrders } = props;
   const router = useRouter();
   const search = useSearchParams();
 
   const data = useMemo(() => {
-    return [
-      {
-        id: 1,
-        status: 0,
-        created_by: "123 asndoasndoasnod",
-        repaired_by: "asdasdad",
-        created_at: "01/01/2024",
-        receive_at: "02/01/2024",
-      },
-    ];
+    return repairOrders;
   }, [search.get("status")]);
 
   const columns = useMemo(() => {
@@ -55,16 +49,16 @@ export default function CustomerOrderTable() {
         },
         Filter: StatusFilter,
       },
-      { Header: "Người tạo", accessor: "created_by", Filter: ColumnFilter },
-      { Header: "Người tiếp nhận", accessor: "repaired_by", Filter: ColumnFilter },
-      { Header: "Ngày tạo", accessor: "created_at", Filter: ColumnFilter },
-      { Header: "Ngày trả hàng", accessor: "receive_at", Filter: ColumnFilter },
+      { Header: "Người tạo", accessor: "createdBy", Filter: ColumnFilter },
+      { Header: "Người tiếp nhận", accessor: "repairedBy", Filter: ColumnFilter },
+      { Header: "Ngày tạo", accessor: "createdAt", Filter: ColumnFilter },
+      { Header: "Ngày trả hàng", accessor: "receiveAt", Filter: ColumnFilter },
     ];
   }, [search.get("status")]);
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDetail = (id) => {
-    router.push(`/quan-ly/khach-hang/${id}`)
+    router.push(`/quan-ly/chi-tiet-don/${id}`);
   };
   const tableHooks = (hooks) => {
     hooks.visibleColumns.push((columns) => {
@@ -75,9 +69,15 @@ export default function CustomerOrderTable() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleDetail(row.values.id)} className={styles["button"]}>
-                Xem chi tiết
-              </button>
+              <div
+                style={{
+                  padding: "5px"
+                }}
+              >
+                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
+                  Xem chi tiết
+                </button>
+              </div>
             );
           },
         },
@@ -121,7 +121,7 @@ export default function CustomerOrderTable() {
   );
 
   return (
-    <div className={styles["dashboard__customers__content__table-container"]}>
+    <>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => {
@@ -189,7 +189,7 @@ export default function CustomerOrderTable() {
           ))}
         </select>
       </div>
-    </div>
+    </>
   );
 }
 
