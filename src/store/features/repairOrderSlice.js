@@ -5,9 +5,12 @@ const initialState = {
   repairReason: null,
   repairType: null,
   tasksProducts: [],
+  tasks: [],
+  products: [],
   anyProduct: false,
   total: 0,
   isWarranted: false,
+  isOrderFromCustomerPage: false,
 };
 
 export const repairOrderSlice = createSlice({
@@ -22,6 +25,10 @@ export const repairOrderSlice = createSlice({
       state.isWarranted = action.payload.object.id === 1;
     },
     addProduct: (state, action) => {
+      state.products.push({
+        id: action.payload.object.id,
+        name: action.payload.object.productName,
+      });
       state.tasksProducts.push({
         id: action.payload.object.productSerial,
         name: action.payload.object.productName,
@@ -29,6 +36,7 @@ export const repairOrderSlice = createSlice({
       state.anyProduct = true;
     },
     addTask: (state, action) => {
+      state.tasks.push({ id: action.payload.object.id, name: action.payload.object.name });
       state.tasksProducts.push({
         id: action.payload.object.id,
         name: action.payload.object.name,
@@ -43,6 +51,9 @@ export const repairOrderSlice = createSlice({
         state.anyProduct = false;
       }
     },
+    isOrderFromCustomerPage: (state, action) => {
+      state.isOrderFromCustomerPage = action.payload.flag;
+    },
     reset: (state) => {
       Object.assign(state, initialState);
     },
@@ -56,6 +67,7 @@ export const {
   addProduct,
   addTask,
   removeTasksProducts,
+  isOrderFromCustomerPage,
   reset,
 } = repairOrderSlice.actions;
 export default repairOrderSlice.reducer;
