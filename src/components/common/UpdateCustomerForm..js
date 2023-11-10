@@ -3,26 +3,60 @@ import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import styles from "@/styles/main.module.scss";
 import { hideDialog } from "@/store/features/dialogSlice";
+import { useGetCustomerByIdQuery, useUpdateCustomerMutation } from "@/services/api/customer/customerApi";
+import { useParams } from "next/navigation";
+import Loading from "@/app/loading";
+import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 
 export default function UpdateCustomerForm() {
   const dispatch = useDispatch();
+  const params = useParams();
+  const [updateCustomer, { loading }] = useUpdateCustomerMutation();
+  const { data: customer, isLoading, isFetching, isError } = useGetCustomerByIdQuery(params.id);
   const dialog = useSelector((state) => state.dialog);
   const {
     control,
     register,
     handleSubmit,
     formState: { errors },
-    reset
-  } = useForm({});
+    reset,
+  } = useForm({
+    defaultValues: {
+      name: customer?.data.name,
+      address: customer?.data.address,
+      phone: customer?.data.phone,
+      email: customer?.data.email,
+      note: customer?.data.note,
+    },
+  });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      dispatch(showLoading({ content: "Đang cập nhật thông tin khách hàng" }));
+      const payload = {
+        Id: customer.data.id,
+        Name: data.name,
+        Address: data.address,
+        Phone: data.phone,
+        Email: data.email,
+        Note: data.note,
+      };
+      const result = await updateCustomer(payload);
+      dispatch(showLoading({ content: result.data.message }));
+    } catch (err) {
+      console.log(err);
+    }
+    dispatch(hideLoading());
     dispatch(hideDialog());
   };
 
   const handleCloseForm = () => {
     dispatch(hideDialog());
   };
+
+  if (isError) return <div>Có lỗi xảy ra!</div>;
+
+  if (isLoading || isFetching) return <Loading />;
 
   return (
     <form
@@ -49,15 +83,15 @@ export default function UpdateCustomerForm() {
         <input type="text" id="email" {...register("email")} />
       </div>
       <div className={styles["dialog__content__box__control"]}>
-        <label htmlFor="ghi-chu">Ghi chú</label>
-        <textarea id="ghi-chu" name="ghi-chu" rows="10" cols="50" {...register("ghi-chu")} />
+        <label htmlFor="note">Ghi chú</label>
+        <textarea id="note" name="note" rows="10" cols="50" {...register("note")} />
       </div>
       <div className={styles["dialog__content__box__actions"]}>
         <button onClick={handleCloseForm} className={styles["button"]}>
           Hủy
         </button>
         <button style={{ marginLeft: "auto" }} type="submit" className={styles["button"]}>
-          Tạo mới khách hàng
+          Xác nhận chỉnh sửa
         </button>
       </div>
     </form>
