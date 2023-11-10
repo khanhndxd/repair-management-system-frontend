@@ -41,7 +41,7 @@ export default function CustomerTable() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleDetail(row.values.id)} className={styles["button"]}>
+              <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
                 Xem chi tiết
               </button>
             );
