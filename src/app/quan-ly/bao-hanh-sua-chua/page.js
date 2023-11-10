@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import styles from "@/styles/main.module.scss";
 import RepairOrderTable from "@/components/pages/quan-ly/bao-hanh-sua-chua/RepairOrderTable";
 import { useDispatch } from "react-redux";
@@ -23,7 +23,7 @@ export default function Maintain() {
         </button>
       </div>
       <div className={styles["dashboard__orders__content"]}>
-          <RepairOrderTable />
+        <RepairOrderTable />
       </div>
     </div>
   );
