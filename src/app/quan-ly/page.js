@@ -1,12 +1,15 @@
+import Stats from "@/components/pages/quan-ly/trang-chu/Stats";
 import styles from "@/styles/main.module.scss";
 import Link from "next/link";
 
 export default function Home() {
   return (
     <main className={styles["dashboard__main"]}>
-      <h1>Tổng quan</h1>
+      <h1>Trang chủ</h1>
       <div className={styles["dashboard__main__content"]}>
-        <p>Danh sách trạng thái các đơn bảo hành</p>
+        <h3>Thống kê</h3>
+        <Stats />
+        <h3>Danh sách trạng thái đơn bảo hành</h3>
         <div className={styles["dashboard__main__content__overview"]}>
           <div className={styles["dashboard__main__content__overview__box"]}>
             <h3>100</h3>
