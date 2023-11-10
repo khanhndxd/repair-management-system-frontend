@@ -19,6 +19,17 @@ const repairOrderApi = baseApi.injectEndpoints({
     }),
     updateRepairOrderStatus: build.mutation({
       query: (body) => ({
+        url: "/RepairOrder/Status",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: [
+        { type: "RepairOrders", id: "Single" },
+        { type: "RepairOrders", id: "List" },
+      ],
+    }),
+    updateRepairOrder: build.mutation({
+      query: (body) => ({
         url: "/RepairOrder",
         method: "PATCH",
         body,
@@ -36,4 +47,5 @@ export const {
   useGetRepairOrderByIdQuery,
   useAddRepairOrderMutation,
   useUpdateRepairOrderStatusMutation,
+  useUpdateRepairOrderMutation,
 } = repairOrderApi;
