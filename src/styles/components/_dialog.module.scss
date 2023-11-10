@@ -35,6 +35,9 @@
                     border-radius: 5px;
                     border: 1px solid #ccc;
                 }
+                & > textarea {
+                    padding: 5px;
+                }
             } 
             &__actions {
                 @include abstracts.display-flex-row;
