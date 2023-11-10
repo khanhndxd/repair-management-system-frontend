@@ -1,8 +1,11 @@
 "use client";
+import Loading from "@/app/loading";
 import CustomerOrderTable from "@/components/pages/quan-ly/khach-hang/chi-tiet-khach-hang/CustomerOrderTable";
+import { useGetCustomerByIdQuery } from "@/services/api/customer/customerApi";
 import { showDialog } from "@/store/features/dialogSlice";
+import { addCustomer, isOrderFromCustomerPage, reset } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -13,8 +16,10 @@ const activities = [
 
 export default function CustomerDetail() {
   const router = useRouter();
+  const params = useParams();
   const dispatch = useDispatch();
-  const [activity, setActivity] = useState("");
+  const { data, isLoading, isFetching, isError } = useGetCustomerByIdQuery(params.id);
+  const [activity, setActivity] = useState(1);
 
   const handleBack = () => {
     router.back();
@@ -25,12 +30,26 @@ export default function CustomerDetail() {
   };
 
   const handleAddRepairOrder = () => {
+    dispatch(
+      addCustomer({
+        id: data.data.id,
+        name: data.data.name,
+        phone: data.data.phone,
+        address: data.data.address,
+        email: data.data.email,
+      })
+    );
+    dispatch(isOrderFromCustomerPage({ flag: true }));
     router.push(`/quan-ly/tiep-nhan-bao-hanh`);
   };
 
   const handleUpdateCustomer = () => {
     dispatch(showDialog({ title: "Chỉnh sửa thông tin khách hàng", content: "update-customer" }));
   };
+
+  if (isError) return <div>Có lỗi xảy ra!</div>;
+
+  if (isLoading || isFetching) return <Loading />;
 
   return (
     <div className={styles["dashboard__customerdetail"]}>
@@ -40,32 +59,29 @@ export default function CustomerDetail() {
       </div>
       <div className={styles["dashboard__customerdetail__basic"]}>
         <div className={styles["dashboard__customerdetail__basic__image"]}></div>
-        <h2>Nguyễn Duy Khánh</h2>
+        <h2>{data.data.name}</h2>
         <p style={{ cursor: "pointer" }} onClick={handleUpdateCustomer}>
           Chỉnh sửa
         </p>
       </div>
       <div className={styles["dashboard__customerdetail__info"]}>
         <div className={styles["dashboard__customerdetail__info__detail"]}>
-          <h4>Thông tin phiếu</h4>
+          <h4>Thông tin khách hàng</h4>
           <div className={styles["dashboard__customerdetail__info__detail__content"]}>
             <p>
-              <strong>Địa chỉ:</strong> 123 ABCD
+              <strong>Địa chỉ:</strong> {data.data.address}
             </p>
             <p>
-              <strong>Số điện thoại:</strong> 0123456789
+              <strong>Số điện thoại:</strong> {data.data.phone}
             </p>
             <p>
-              <strong>Đã mua hàng:</strong> 5 lần
+              <strong>Đã mua hàng:</strong> {data.data.purchaseOrders.length} lần
             </p>
             <p>
-              <strong>Đã bảo hành:</strong> 10 lần
+              <strong>Đã bảo hành:</strong> {data.data.repairOrders.length} lần
             </p>
             <p>
-              <strong>Ghi chú:</strong> Lorem, ipsum dolor sit amet consectetur adipisicing elit. Cumque,
-              earum repellat sit aspernatur minima eius. Officia ipsum aliquam dolor magnam pariatur eveniet
-              libero, obcaecati natus. Recusandae nihil ullam eius provident odit eligendi est, tempora
-              nesciunt aliquam sequi laborum, iusto fuga?
+              <strong>Ghi chú:</strong> {data.data.note}
             </p>
           </div>
         </div>
@@ -93,10 +109,24 @@ export default function CustomerDetail() {
                 Thêm đơn tiếp nhận bảo hành
               </button>
             </div>
-            <CustomerOrderTable />
+            <CustomerOrderTable repairOrders={preprocessingCustomerOrderData(data.data.repairOrders)} />
           </div>
         </div>
       </div>
     </div>
   );
 }
+
+const preprocessingCustomerOrderData = (data) => {
+  const result = data.map((item) => {
+    return {
+      id: item.id,
+      status: item.status.id,
+      createdBy: item.createdBy.userName,
+      repairedBy: item.repairedBy.userName,
+      createdAt: new Date(item.createdAt).toLocaleDateString(),
+      receiveAt: new Date(item.receiveAt).toLocaleDateString(),
+    };
+  });
+  return result;
+};
