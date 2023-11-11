@@ -7,6 +7,7 @@ import dialogReducer from "./features/dialogSlice";
 import loadingAsyncReducer from "./features/loadingAsyncSlice";
 import repairOrderReducer from "./features/repairOrderSlice";
 import accessoryCartReducer from "./features/accessoryCartSlice";
+import authReducer from "./features/authSlice";
 import { baseApi } from "@/services/api/baseApi";
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     loadingAsync: loadingAsyncReducer,
     repairOrder: repairOrderReducer,
     accessoryCart: accessoryCartReducer,
+    auth: authReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
