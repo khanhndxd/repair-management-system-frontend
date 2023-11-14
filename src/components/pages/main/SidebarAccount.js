@@ -1,16 +1,16 @@
 "use client";
 import styles from "@/styles/main.module.scss";
-import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { showNotification } from "@/store/features/notificationSlice";
+import { logOut } from "@/store/features/authSlice";
+import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 
 export default function SidebarAccount() {
-  const router = useRouter();
   const dispatch = useDispatch();
 
   const handleLogout = () => {
-    router.push("/dang-nhap");
-    dispatch(showNotification({ message: "Đăng xuất thành công", type: "success" }));
+    dispatch(showLoading({ content: "Đang đăng xuất khỏi tài khoản..." }));
+    dispatch(logOut());
   };
 
   return (
