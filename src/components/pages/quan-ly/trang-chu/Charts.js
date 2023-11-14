@@ -24,7 +24,6 @@ export default function Charts(props) {
       </div>
     );
   }
-  console.log(data)
   if (searchParams.get("loai") !== null) {
     if (searchParams.get("loai") === "bar") {
         const title = searchParams.get("thongke") !== null ? types[searchParams.get("thongke")].title : "Loại sửa chữa";
