@@ -21,7 +21,7 @@
         gap: 20px;
         &__input {
             @include abstracts.display-flex-column;
-            gap:10px;
+            gap:5px;
             & > input {
                 border-radius: 5px;
                 font-size: 16x;
