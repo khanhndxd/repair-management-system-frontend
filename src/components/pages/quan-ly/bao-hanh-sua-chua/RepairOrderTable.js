@@ -28,6 +28,7 @@ export default function RepairOrderTable() {
   const tableData = useMemo(() => {
     if (isLoading === false) {
       let newData = preprocessingRepairOrderData(data)
+      if(!newData) return []
       return newData;
     }
     return [];
@@ -280,7 +281,7 @@ const StatusFilter = ({ column }) => {
 };
 
 const preprocessingRepairOrderData = (data) => {
-  let result = data.data.map((item) => {
+  let result = data?.data?.map((item) => {
     return {
       id: item.id,
       customer: item.customer.name,
