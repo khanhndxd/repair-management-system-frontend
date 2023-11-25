@@ -16,6 +16,7 @@ export default function ManagementLayout({ children }) {
         <SidebarLink content={"Quản lý bảo hành/sửa chữa"} href="/quan-ly/bao-hanh-sua-chua" />
         <SidebarLink content={"Quản lý khách hàng"} href="/quan-ly/khach-hang" />
         <SidebarLink content={"Tiếp nhận bảo hành"} href="/quan-ly/tiep-nhan-bao-hanh" />
+        <SidebarLink content={"Thống kê"} href="/quan-ly/thong-ke" />
         <SidebarAccount />
       </aside>
       <div className={styles["dashboard"]}>{children}</div>
