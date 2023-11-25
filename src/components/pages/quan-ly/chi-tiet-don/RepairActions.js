@@ -7,7 +7,7 @@ import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { showNotification } from "@/store/features/notificationSlice";
 import styles from "@/styles/main.module.scss";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 const statuses = [
   { value: 1, label: "Chờ xử lý" },
@@ -31,14 +31,18 @@ export default function RepairActions(props) {
     repairedBy,
     currentStatus,
     repairAccessories,
-    repairProduct,
-    task,
+    repairProducts,
+    repairTasks,
+    repairCustomerProducts,
+    repairReason,
     totalPrice,
   } = props;
   const [updateRepairOrderStatus, { loading }] = useUpdateRepairOrderStatusMutation();
   const [pdfBlob, setPdfBlob] = useState(null);
   const [status, setStatus] = useState(currentStatus);
   const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth)
+  
   const handleStatus = async (e) => {
     dispatch(showLoading({ content: "Đang cập nhật trạng thái đơn..." }));
     await updateRepairOrderStatus({
@@ -89,6 +93,8 @@ export default function RepairActions(props) {
           customerEmail: customer.email,
           createdAt: createdAt,
           receiveAt: receiveAt,
+          createdBy: auth.user,
+          repairReason: repairReason.reason,
           accessories: repairAccessories.map((item) => {
             return {
               id: item.accessory.id,
@@ -98,10 +104,16 @@ export default function RepairActions(props) {
               price: item.accessory.price,
             };
           }),
-          repairProducts: repairProduct.map((item) => {
+          repairProducts: repairProducts.map((item) => {
             return { id: item.purchasedProduct.productSerial, name: item.purchasedProduct.productName };
           }),
-          tasks: { id: task.id, name: task.name, price: task.price },
+          repairCustomerProducts: repairCustomerProducts.map((item) => {
+            return { id: item.customerProduct.id, name: item.customerProduct.name };
+          }),
+          repairTasks: repairTasks.map((item) => {
+            return { id: item.task.id, name: item.task.name, price: item.task.price };
+          }),
+          totalPrice: totalPrice,
         }),
       });
 

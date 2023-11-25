@@ -1,9 +1,10 @@
 "use client";
 import styles from "@/styles/main.module.scss";
 import RepairOrderProductList from "./RepairOrderProductList";
+import { convertToVND } from "@/services/helper/helper";
 
 export default function CustomerInfo(props) {
-  const { customer, createdBy, repairedBy, repairProduct, task, status, total } = props;
+  const { customer, createdBy, repairedBy, repairProduct, repairTasks, repairCustomerProducts, status, total } = props;
 
   return (
     <>
@@ -29,9 +30,9 @@ export default function CustomerInfo(props) {
           <strong>Email</strong>: {customer.email}
         </p>
       </div>
-      <RepairOrderProductList repairProduct={repairProduct} task={task} />
+      <RepairOrderProductList repairProduct={repairProduct} repairTasks={repairTasks} repairCustomerProducts={repairCustomerProducts} />
       <p>
-        Tổng chi phí: <strong style={{ fontSize: "24px" }}>{total} đ</strong>
+        Tổng chi phí: <strong style={{ fontSize: "24px" }}>{convertToVND(total)}</strong>
       </p>
     </>
   );

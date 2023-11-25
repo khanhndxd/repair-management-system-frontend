@@ -4,10 +4,10 @@ import { useTable } from "react-table";
 import { useMemo } from "react";
 
 export default function RepairOrderProductList(props) {
-  const { repairProduct, task } = props;
+  const { repairProduct, repairTasks, repairCustomerProducts } = props;
 
   const data = useMemo(() => {
-    const processedData = preprocessingProductListData(repairProduct, task);
+    const processedData = preprocessingProductListData(repairProduct, repairTasks, repairCustomerProducts);
     return processedData;
   }, []);
 
@@ -19,36 +19,10 @@ export default function RepairOrderProductList(props) {
     ];
   }, []);
 
-  // Cac functions de chinh sua du lieu tren bang
-  const handleDelete = (id) => {
-    alert("delete " + id);
-  };
-
-  // const tableHooks = (hooks) => {
-  //   hooks.visibleColumns.push((columns) => {
-  //     return [
-  //       ...columns,
-  //       {
-  //         id: "update",
-  //         Header: "Thao tác",
-  //         Cell: ({ row }) => {
-  //           return (
-  //             <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
-  //               Xóa
-  //             </button>
-  //           );
-  //         },
-  //       },
-  //     ];
-  //   });
-  // };
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    {
-      columns,
-      data,
-    },
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+  });
 
   return (
     <div className={styles["dashboard__orderdetail__content__box__product"]}>
@@ -95,15 +69,25 @@ export default function RepairOrderProductList(props) {
   );
 }
 
-const preprocessingProductListData = (product, task) => {
-  let result = product.map((item) => {
-    return {
-      id: item.purchasedProduct.productSerial,
-      name: item.purchasedProduct.productName,
-      description: item.description,
-    };
-  });
-  result.push({ id: task.id, name: task.name, description: "" });
+const preprocessingProductListData = (product, tasks, customerProducts) => {
+  let result = [];
+  for (let i = 0; i < product.length; i++) {
+    result.push({
+      id: product[i].purchasedProduct.productSerial,
+      name: product[i].purchasedProduct.productName,
+      description: product[i].description,
+    });
+  }
+  for (let i = 0; i < tasks.length; i++) {
+    result.push({ id: tasks[i].task.id, name: tasks[i].task.name, description: tasks[i].description });
+  }
+  for (let i = 0; i < customerProducts.length; i++) {
+    result.push({
+      id: "SPM" + customerProducts[i].customerProduct.id,
+      name: customerProducts[i].customerProduct.name,
+      description: customerProducts[i].description,
+    });
+  }
 
   return result;
 };
