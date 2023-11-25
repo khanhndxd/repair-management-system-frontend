@@ -41,8 +41,9 @@ export default function RepairOrderDetail() {
           repairedBy={data.data.repairedBy.id}
           currentStatus={data.data.status.id}
           repairAccessories={data.data.repairAccessories}
-          repairProduct={data.data.repairProducts}
-          task={data.data.task}
+          repairProducts={data.data.repairProducts}
+          repairTasks={data.data.repairTasks}
+          repairCustomerProducts={data.data.repairCustomerProducts}
           totalPrice={data.data.totalPrice}
         />
       </div>
@@ -54,7 +55,8 @@ export default function RepairOrderDetail() {
             createdBy={data.data.createdBy}
             repairedBy={data.data.repairedBy}
             repairProduct={data.data.repairProducts}
-            task={data.data.task}
+            repairTasks={data.data.repairTasks}
+            repairCustomerProducts={data.data.repairCustomerProducts}
             status={data.data.status.id}
             total={data.data.totalPrice}
           />
