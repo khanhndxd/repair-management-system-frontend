@@ -10,6 +10,7 @@
     justify-content: center;
     background-color: rgba(#fff, .5);;
     display: hidden;
+    z-index: 99;
     &__content {
         @include abstracts.display-flex-column;
         gap:20px;
@@ -37,6 +38,11 @@
                 }
                 & > textarea {
                     padding: 5px;
+                }
+                & > select {
+                    padding: 8px;
+                    border-radius: 5px;
+                    border: 1px solid #ccc;
                 }
             } 
             &__actions {
