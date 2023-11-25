@@ -12,8 +12,12 @@ export default function RepairList() {
   const dispatch = useDispatch();
 
   const data = useMemo(() => {
-    return repairOrder.tasksProducts;
-  }, [repairOrder.tasksProducts]);
+    return preprocessingRepairListData(
+      repairOrder.products,
+      repairOrder.tasks,
+      repairOrder.newRepairProducts
+    );
+  }, [repairOrder.products, repairOrder.tasks, repairOrder.newRepairProducts]);
 
   const columns = useMemo(() => {
     return [
@@ -21,11 +25,22 @@ export default function RepairList() {
       { Header: "Tên sản phẩm/Công việc", accessor: "name" },
       { Header: "Mô tả", accessor: "description" },
     ];
-  }, [repairOrder.tasksProducts]);
+  }, [repairOrder.products, repairOrder.tasks, repairOrder.newRepairProducts]);
 
   // Cac functions de chinh sua du lieu tren bang
-  const handleDelete = (id) => {
-    dispatch(removeTasksProducts({ id: id }));
+  const handleDelete = (item) => {
+    dispatch(removeTasksProducts(item));
+  };
+
+  const handleUpdateDescription = (id) => {
+    let item;
+    for (let i = 0; i < repairOrder.tasksProducts.length; i++) {
+      if (repairOrder.tasksProducts[i].id == id) {
+        item = repairOrder.tasksProducts[i];
+        break;
+      }
+    }
+    dispatch(showDialog({ title: `Cập nhật mô tả ${item.name}`, content: "update-description", info: { object: item } }));
   };
 
   const tableHooks = (hooks) => {
@@ -37,13 +52,25 @@ export default function RepairList() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button
-                onClick={() => handleDelete(row.values.id)}
-                className={styles["no-effect-button"]}
-                style={{ fontWeight: "bold", textDecoration: "underline", fontSize: "16px" }}
-              >
-                Xóa
-              </button>
+              <>
+                <button
+                  onClick={() => handleDelete(row.values)}
+                  className={styles["no-effect-button"]}
+                  style={{ fontWeight: "bold", textDecoration: "underline", fontSize: "16px" }}
+                  type="button"
+                >
+                  Xóa
+                </button>
+                &nbsp; | &nbsp;
+                <button
+                  onClick={() => handleUpdateDescription(row.values.id)}
+                  className={styles["no-effect-button"]}
+                  style={{ fontWeight: "bold", textDecoration: "underline", fontSize: "16px" }}
+                  type="button"
+                >
+                  Sửa mô tả
+                </button>
+              </>
             );
           },
         },
@@ -71,21 +98,33 @@ export default function RepairList() {
       })
     );
   };
-  
+
+  const handleAddCustomerProduct = () => {
+    if (repairOrder.customer === null) {
+      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      return;
+    }
+    dispatch(showDialog({ title: "Chọn sản phẩm của khách hàng", content: "add-customer-product" }));
+  }
+
+  const handleAddNewRepairProduct = () => {
+    if (repairOrder.customer === null) {
+      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      return;
+    }
+    dispatch(showDialog({ title: "Thêm sản phẩm mới", content: "add-new-product" }));
+  };
+
   return (
     <>
       <div className={styles["dashboard__neworder__content__product__actions"]}>
-        <button
-          type="button"
-          onClick={handleAddPurchasedProduct}
-          className={
-            repairOrder.anyProduct === true ? styles["button-outline--disabled"] : styles["button-outline"]
-          }
-          disabled={repairOrder.anyProduct === true}
-        >
+        <button type="button" onClick={handleAddPurchasedProduct} className={styles["button-outline"]}>
           Chọn sản phẩm đã mua
         </button>
-        <button type="button" className={styles["button-outline"]}>
+        <button type="button" onClick={handleAddCustomerProduct} className={styles["button-outline"]}>
+          Chọn sản phẩm của khách hàng
+        </button>
+        <button onClick={handleAddNewRepairProduct} type="button" className={styles["button-outline"]}>
           Tạo mới sản phẩm
         </button>
       </div>
@@ -133,3 +172,27 @@ export default function RepairList() {
     </>
   );
 }
+
+const preprocessingRepairListData = (products, tasks, newProducts) => {
+  let result = [];
+  for (let i = 0; i < products.length; i++) {
+    result.push({
+      id: products[i].serial,
+      name: products[i].name,
+      serial: products[i].serial,
+      description: products[i]?.description,
+    });
+  }
+  for (let i = 0; i < tasks.length; i++) {
+    result.push({ id: tasks[i].id, name: tasks[i].name, description: tasks[i]?.description });
+  }
+  for (let i = 0; i < newProducts.length; i++) {
+    result.push({
+      id: newProducts[i].id,
+      name: newProducts[i].name,
+      description: newProducts[i]?.description,
+    });
+  }
+
+  return result;
+};
