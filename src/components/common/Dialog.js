@@ -5,12 +5,18 @@ import NewCustomerForm from "./NewCustomerForm";
 import UpdateCustomerForm from "./UpdateCustomerForm.";
 import AddPurchasedProductForm from "./AddPurchasedProductForm";
 import AddAccessoryForm from "./AddAccessoryForm";
+import UpdateDescriptionForm from "./UpdateDescriptionForm";
+import AddNewProductForm from "./AddNewProductForm";
+import AddCustomerProductForm from "./AddCustomerProductForm";
 
 const content = {
   "add-customer": <NewCustomerForm />,
   "update-customer": <UpdateCustomerForm />,
   "add-purchased-product": <AddPurchasedProductForm />,
-  "add-accessory": <AddAccessoryForm />
+  "add-accessory": <AddAccessoryForm />,
+  "update-description": <UpdateDescriptionForm />,
+  "add-new-product": <AddNewProductForm />,
+  "add-customer-product": <AddCustomerProductForm />
 };
 
 export default function Dialog(props) {
