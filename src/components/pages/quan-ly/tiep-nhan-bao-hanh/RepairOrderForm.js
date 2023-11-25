@@ -15,6 +15,8 @@ export default function RepairOrderForm(props) {
     register,
     handleSubmit,
     getValues,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm({
     defaultValues: initialValues,
@@ -35,14 +37,14 @@ export default function RepairOrderForm(props) {
           </div>
           <div className={styles["dashboard__neworder__content__info__box"]}>
             <h3>&#10113; Thông tin đơn</h3>
-            <RepairOrderInfoForm register={register} errors={errors} />
+            <RepairOrderInfoForm control={control} watch={watch} setValue={setValue} register={register} errors={errors} />
           </div>
         </div>
         <div className={styles["dashboard__neworder__content__product"]}>
           <h3>&#10114; Thông tin bảo hành</h3>
           <RepairList />
           <p style={{ marginLeft: "auto" }}>
-            Tổng chi phí: <strong style={{ fontSize: "24px" }}>{repairOrder?.total} đ</strong>
+            Tổng chi phí: <strong style={{ fontSize: "24px" }}>{repairOrder?.total}</strong>
           </p>
         </div>
         <div className={styles["dashboard__neworder__content__info"]}>
