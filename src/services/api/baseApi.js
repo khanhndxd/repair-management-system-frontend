@@ -15,10 +15,8 @@ const baseQuery = fetchBaseQuery({
 const baseQueryWithReauth = async (args, api, extraOptions) => {
   let result = await baseQuery(args, api, extraOptions);
 
-  console.log(result);
-
   if (result?.error?.status === 401) {
-    console.log("sending refresh token");
+    console.log("SENDING REFRESH TOKEN");
     // send refresh token to get new access token
     const refreshResult = await fetch(`${process.env.NEXT_PUBLIC_BASE_API_URL}/Auth/RefreshToken`, {
       method: "POST",
@@ -60,6 +58,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const baseApi = createApi({
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Customers", "RepairOrders"],
+  tagTypes: ["Customers", "RepairOrders", "CustomerProduct"],
   endpoints: () => ({}),
 });
