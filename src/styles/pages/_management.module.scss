@@ -70,36 +70,6 @@
                         }
                     }
                 }
-                &__stats {
-                    @include abstracts.display-grid;
-                    grid-template-columns: 2fr 1fr;
-                    gap: 10px;
-                    &__chart {
-                        @include abstracts.display-flex-row;
-                        position:relative;
-                        height:350px;
-                        padding: 10px;
-                        background-color: #fff;
-                        border: 1px solid #ccc;
-                        border-radius: 5px;
-                        justify-content: center;
-                        align-items: center;
-                        & > h3 {
-                            position:absolute;
-                            top:0;
-                            left:0;
-                            margin: 10px 0px 0px 10px;
-                        }
-                    }
-                    &__info {
-                        @include abstracts.display-flex-column;
-                        padding: 10px;
-                        border-radius: 5px;
-                        border: 1px solid #ccc;
-                        background-color: #fff;
-                        gap:5px;
-                    }
-                }
             }
         }
         &__orders{
@@ -451,6 +421,72 @@
                         @include abstracts.display-flex-column;
                         gap:10px;
                     }
+                }
+            }
+        }
+        &__stats {
+            @include abstracts.display-flex-column;
+            gap: 20px; 
+            & > h1 {
+                font-size: 24px;
+            }
+            &__overall {
+                @include abstracts.display-flex-row;
+                gap: 20px;
+                justify-content: flex-start;
+                align-items: center;
+                &__box {
+                    flex-basis: 25%;
+                    padding: 30px 15px;
+                    @include abstracts.display-flex-column;
+                    gap: 10px;
+                    border: 2px solid gray;
+                    border-radius: abstracts.$border-box-radius;
+                    background-color: #fff;
+                    & > p {
+                        font-style: italic;
+                    }
+                    & > h3 {
+                        font-size: 20px;
+                    }
+                }
+            }
+            &__content {
+                @include abstracts.display-grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+                &__chart {
+                    @include abstracts.display-flex-row;
+                    position:relative;
+                    height:350px;
+                    padding: 10px;
+                    background-color: #fff;
+                    border: 1px solid #ccc;
+                    border-radius: abstracts.$border-box-radius;
+                    justify-content: center;
+                    align-items: center;
+                    & > h3 {
+                        position:absolute;
+                        top:0;
+                        left:0;
+                        margin: 10px 0px 0px 10px;
+                    }
+                    & > select {
+                        border-radius: 5px;
+                        padding: 5px;
+                        position:absolute;
+                        top:0;
+                        right:0;
+                        margin: 10px 10px 0px 0px;
+                    }
+                }
+                &__info {
+                    @include abstracts.display-flex-column;
+                    padding: 10px;
+                    border-radius: 5px;
+                    border: 1px solid #ccc;
+                    background-color: #fff;
+                    gap:5px;
                 }
             }
         }
