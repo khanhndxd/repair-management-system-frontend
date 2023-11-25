@@ -4,6 +4,7 @@ const initialState = {
   title: "",
   content:null,
   show: false,
+  info: null
 };
 
 export const dialogSlice = createSlice({
@@ -13,6 +14,7 @@ export const dialogSlice = createSlice({
     showDialog: (state, action) => {
       state.title = action.payload.title;
       state.content = action.payload.content;
+      state.info = action.payload.info ? action.payload.info : state.info
       state.show = true;
     },
     hideDialog: (state) => {
