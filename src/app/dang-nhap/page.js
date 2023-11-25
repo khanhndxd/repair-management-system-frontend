@@ -7,17 +7,20 @@ import { setCredentials } from "@/store/features/authSlice";
 import { useLoginMutation } from "@/services/api/auth/authApi";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
 
 export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
   const [login, { loading }] = useLoginMutation();
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
-    defaultValues: {},
+    defaultValues: { username: "", password: "" },
   });
 
   const handleLogin = async (data) => {
@@ -25,14 +28,13 @@ export default function Login() {
     await login({ email: data.username, password: data.password })
       .unwrap()
       .then((payload) => {
-        console.log(payload);
         dispatch(
           setCredentials({
-            user: "User",
             token: payload.data.token,
             refreshToken: payload.data.refreshToken,
           })
         );
+        setIsSubmitSuccessful(true);
         router.push("/quan-ly");
         dispatch(hideLoading());
         dispatch(showNotification({ message: "Đăng nhập thành công", type: "success" }));
@@ -45,15 +47,24 @@ export default function Login() {
             type: "error",
           })
         );
+        setIsSubmitSuccessful(false);
       });
   };
+
+  useEffect(() => {
+    if (isSubmitSuccessful === true) {
+      reset();
+    }
+  }, [isSubmitSuccessful]);
 
   return (
     <form onSubmit={handleSubmit(handleLogin)} noValidate>
       <div className={styles["box-login"]}>
         <h1>Đăng nhập</h1>
         <div className={styles["box-login__input"]}>
-          <label htmlFor="username">Tài khoản</label>
+          <label htmlFor="username">
+            <i>Tài khoản</i>
+          </label>
           <input
             type="text"
             placeholder="Nhập email"
@@ -67,7 +78,9 @@ export default function Login() {
           )}
         </div>
         <div className={styles["box-login__input"]}>
-          <label htmlFor="password">Mật khẩu</label>
+          <label htmlFor="password">
+            <i>Mật khẩu</i>
+          </label>
           <input
             type="password"
             placeholder="Nhập mật khẩu"
