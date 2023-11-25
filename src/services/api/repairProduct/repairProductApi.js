@@ -13,7 +13,14 @@ const repairProductApi = baseApi.injectEndpoints({
         { type: "RepairOrders", id: "List" },
       ],
     }),
+    updateRepairProduct: build.mutation({
+      query: (body) => ({
+        url: "/RepairProduct/Description",
+        method: "PATCH",
+        body,
+      }),
+    }),
   }),
 });
 
-export const { useAddRepairProductMutation } = repairProductApi;
+export const { useAddRepairProductMutation, useUpdateRepairProductMutation } = repairProductApi;
