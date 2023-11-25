@@ -121,7 +121,7 @@ export default function AddPurchasedProductForm() {
                             color: isExpired === true ? "#ff9966" : "#5dac51",
                           }}
                         >
-                          {isExpired === true ? "Hết hạn bảo hành" : `Còn hạn bảo hành (${daysLeft} ngày)`}
+                          {isExpired === true ? "Hết hạn hoặc không có bảo hành" : `Còn hạn bảo hành (${daysLeft} ngày)`}
                         </span>
                       </span>
                     </div>
