@@ -5,8 +5,12 @@ import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from 
 import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/app/loading";
-import { useGetAllRepairOrdersQuery } from "@/services/api/repairOrder/repairOrderApi";
+import { useDeleteRepairOrderMutation, useGetAllRepairOrdersQuery } from "@/services/api/repairOrder/repairOrderApi";
 import { useGetAllStatusesQuery } from "@/services/api/status/statusApi";
+import { useDispatch, useSelector } from "react-redux";
+import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
+import { showNotification } from "@/store/features/notificationSlice";
+import { roles } from "@/services/helper/helper";
 
 const statuses = {
   1: { content: "Chờ xử lý", color: "#3D7EC5" },
@@ -22,17 +26,20 @@ const statuses = {
 
 export default function RepairOrderTable() {
   const { data, isLoading, isFetching, isError } = useGetAllRepairOrdersQuery();
+  const [deleteRepairOrder, { loading: deleteLoading }] = useDeleteRepairOrderMutation();
+  const auth = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const search = useSearchParams();
   const router = useRouter();
 
   const tableData = useMemo(() => {
-    if (isLoading === false) {
-      let newData = preprocessingRepairOrderData(data)
-      if(!newData) return []
+    if (isLoading === false && isFetching === false) {
+      let newData = preprocessingRepairOrderData(data);
+      if (!newData) return [];
       return newData;
     }
     return [];
-  }, [search.get("status"), isLoading]);
+  }, [search.get("status"), isLoading, isFetching]);
 
   const columns = useMemo(() => {
     return [
@@ -49,7 +56,7 @@ export default function RepairOrderTable() {
                 height: "100%",
                 padding: "8px 0px",
                 fontWeight: "bold",
-                backgroundColor: statuses[value].color
+                backgroundColor: statuses[value].color,
               }}
             >
               {statuses[value].content}
@@ -63,11 +70,18 @@ export default function RepairOrderTable() {
       { Header: "Ngày tạo", accessor: "created_at", Filter: ColumnFilter },
       { Header: "Ngày trả hàng", accessor: "receive_at", Filter: ColumnFilter },
     ];
-  }, [search.get("status"), isLoading]);
+  }, [search.get("status"), isLoading, isFetching]);
 
   // Cac functions de chinh sua du lieu tren bang
-  const handleDelete = (id) => {
-    alert("delete " + id);
+  const handleDelete = async (id) => {
+    dispatch(showLoading({ content: "Đang xóa đơn bảo hành sửa chữa" }));
+    try {
+      let result = await deleteRepairOrder({ id: +id }).unwrap();
+      dispatch(showNotification({ message: result.data, type: "success" }));
+    } catch (err) {
+      dispatch(showNotification({ message: err.data.message, type: "error" }));
+    }
+    dispatch(hideLoading());
   };
   const handleDetail = (id) => {
     router.push(`/quan-ly/chi-tiet-don/${id}`);
@@ -85,10 +99,14 @@ export default function RepairOrderTable() {
                 <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
                   Xem chi tiết
                 </button>
-                &nbsp;|&nbsp;
-                <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
-                  Xóa
-                </button>
+                {auth.role === roles.admin ? (
+                  <>
+                    &nbsp;|&nbsp;
+                    <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
+                      Xóa
+                    </button>
+                  </>
+                ) : null}
               </>
             );
           },
