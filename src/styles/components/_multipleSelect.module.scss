@@ -38,12 +38,14 @@
         grid-template-columns: 1fr 1fr;
         gap: 5px;
         width: 100%;
+        max-height: 200px;
         top: calc(100% + 5%);
         left: 0px;
         background-color: #fff;
         border: 1px solid #ccc;
         border-radius: 5px;
         padding: 12px;
+        overflow-y: auto;
         &__option {
             @include abstracts.display-flex-row;
             gap: 5px;

@@ -14,6 +14,7 @@ $duration: 4000ms;
     width: 550px;
     border-radius: 100px;
     background-color: #5dac51;
+    z-index: 9999;
     &--info {
         @extend .notification;
         background-color: #5bc0de;
@@ -31,6 +32,7 @@ $duration: 4000ms;
         background-color: #ffcc00;
         animation: fade-in 500ms, fade-out 500ms $duration;
         animation-fill-mode: forwards;
+        color: #000;
     }
     &--error {
         @extend .notification;
