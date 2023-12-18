@@ -2,13 +2,13 @@
 import styles from "@/styles/main.module.scss";
 
 export default function RepairOrderDetailInfo(props) {
-    const {createdAt, receiveAt, repairReason, receiveType, note, status} = props;
+  const { createdAt, receiveAt, repairReason, receiveType, note, status, repairType } = props;
 
   return (
     <>
       <div className={styles["dashboard__orderdetail__content__box__header"]}>
         <h4>Thông tin phiếu</h4>
-        <span>{status.name}</span>
+        <span style={{ fontWeight: "bold" }}>{status.name}</span>
       </div>
       <div className={styles["dashboard__orderdetail__content__box__info"]}>
         <p>
@@ -19,6 +19,12 @@ export default function RepairOrderDetailInfo(props) {
         </p>
         <p>
           <strong>Lý do bảo hành</strong>: {repairReason.reason}
+        </p>
+        <p>
+          <strong>Loại</strong>:{" "}
+          <span style={{ backgroundColor: "#9DFF20", color: "#000", fontWeight: "bold", padding: "5px", borderRadius: "5px" }}>
+            {repairType.name}
+          </span>
         </p>
         <p>
           <strong>Hình thức trả hàng</strong>: {receiveType}

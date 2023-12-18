@@ -4,7 +4,7 @@ import RepairOrderProductList from "./RepairOrderProductList";
 import { convertToVND } from "@/services/helper/helper";
 
 export default function CustomerInfo(props) {
-  const { customer, createdBy, repairedBy, repairProduct, repairTasks, repairCustomerProducts, status, total } = props;
+  const { customer, createdBy, repairedBy, receivedBy, repairProduct, repairTasks, repairCustomerProducts, total } = props;
 
   return (
     <>
@@ -19,13 +19,14 @@ export default function CustomerInfo(props) {
           <strong>Địa chỉ </strong>: {customer.address}
         </p>
         <p>
-          <strong>Người tiếp nhận</strong>: {repairedBy.userName}{" "}
-          {status === 1 ? "(Chưa tiếp nhận đơn)" : null}
+          <strong>Người tiếp nhận</strong>: {repairedBy.userName}
         </p>
         <p>
           <strong>Điện thoại</strong>: {customer.phone}
         </p>
-        <p></p>
+        <p>
+          <strong>Kỹ thuật viên</strong>: {receivedBy.userName}
+        </p>
         <p>
           <strong>Email</strong>: {customer.email}
         </p>

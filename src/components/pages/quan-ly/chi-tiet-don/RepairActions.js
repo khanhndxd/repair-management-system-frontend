@@ -1,25 +1,16 @@
 "use client";
-import { useGeneratePdfMutation } from "@/services/api/pdf/pdfApi";
+import Loading from "@/app/loading";
+import { useAddRepairLogMutation } from "@/services/api/repairLog/repairLogApi";
 import { useUpdateRepairOrderStatusMutation } from "@/services/api/repairOrder/repairOrderApi";
-import { addChosenAccessory } from "@/store/features/accessoryCartSlice";
+import { useGetAllStatusesQuery } from "@/services/api/status/statusApi";
+import { getStatusLabelByValue, statuses } from "@/services/helper/helper";
+import { addChosenAccessory, reset } from "@/store/features/accessoryCartSlice";
 import { showDialog } from "@/store/features/dialogSlice";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { showNotification } from "@/store/features/notificationSlice";
 import styles from "@/styles/main.module.scss";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-const statuses = [
-  { value: 1, label: "Chờ xử lý" },
-  { value: 2, label: "Đã tiếp nhận" },
-  { value: 3, label: "Đang sửa chữa" },
-  { value: 4, label: "Đã chuyển sản phẩm về hãng" },
-  { value: 5, label: "Đã nhận sản phẩm từ hãng" },
-  { value: 6, label: "Đã sửa xong" },
-  { value: 7, label: "Đã hủy" },
-  { value: 8, label: "Đã hoàn thành" },
-  { value: 9, label: "Đã trả hàng" },
-];
 
 export default function RepairActions(props) {
   const {
@@ -29,6 +20,7 @@ export default function RepairActions(props) {
     repairOrderId,
     createdBy,
     repairedBy,
+    receivedBy,
     currentStatus,
     repairAccessories,
     repairProducts,
@@ -37,20 +29,44 @@ export default function RepairActions(props) {
     repairReason,
     totalPrice,
   } = props;
-  const [updateRepairOrderStatus, { loading }] = useUpdateRepairOrderStatusMutation();
+  const { data, isLoading, isFetching, isError } = useGetAllStatusesQuery();
+  const [updateRepairOrderStatus, { loading: updateStatusLoading }] = useUpdateRepairOrderStatusMutation();
+  const [addRepairLog, { loading: logLoading }] = useAddRepairLogMutation();
   const [pdfBlob, setPdfBlob] = useState(null);
-  const [status, setStatus] = useState(currentStatus);
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth)
-  
+  const auth = useSelector((state) => state.auth);
+
+  if (isLoading || isFetching) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
+  if (isError) return <div>Có lỗi xảy ra!</div>;
+
   const handleStatus = async (e) => {
     dispatch(showLoading({ content: "Đang cập nhật trạng thái đơn..." }));
-    await updateRepairOrderStatus({
-      id: repairOrderId,
-      createdById: createdBy.toString(),
-      repairedById: repairedBy.toString(),
-      statusId: +e.target.value,
-    });
+    try {
+      const label = getStatusLabelByValue(+e.target.value);
+      await updateRepairOrderStatus({
+        id: repairOrderId,
+        createdById: createdBy.toString(),
+        repairedById: repairedBy.toString(),
+        receivedById: receivedBy.toString(),
+        statusId: +e.target.value,
+      }, { id: repairOrderId });
+
+      const logPayload = {
+        RepairOrderId: repairOrderId,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: `Cập nhật trạng thái đơn thành '${label}'`,
+      };
+      await addRepairLog(logPayload, { id: repairOrderId });
+    } catch (err) {
+      console.log(err);
+    }
     dispatch(hideLoading());
     dispatch(
       showNotification({
@@ -62,17 +78,31 @@ export default function RepairActions(props) {
 
   const handleAcceptOrder = async () => {
     dispatch(showLoading({ content: "Đang cập nhật trạng thái đơn..." }));
-    await updateRepairOrderStatus({
-      id: repairOrderId,
-      createdById: createdBy.toString(),
-      repairedById: repairedBy.toString(),
-      statusId: 2,
-    });
+    try {
+      await updateRepairOrderStatus({
+        id: repairOrderId,
+        createdById: createdBy.toString(),
+        repairedById: repairedBy.toString(),
+        receivedById: receivedBy.toString(),
+        statusId: 2,
+      }, { id: repairOrderId });
+
+      const logPayload = {
+        RepairOrderId: repairOrderId,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: "Tiếp nhận đơn",
+      };
+      await addRepairLog(logPayload, { id: repairOrderId });
+    } catch (err) {
+      console.log(err);
+    }
     dispatch(hideLoading());
     dispatch(showNotification({ message: "Nhân viên đã tiếp nhận đơn", type: "success" }));
   };
 
   const handleAddAccessory = () => {
+    dispatch(reset())
     dispatch(addChosenAccessory({ info: repairAccessories }));
     dispatch(showDialog({ title: "Thêm/chỉnh sửa thông tin linh kiện", content: "add-accessory" }));
   };
@@ -131,7 +161,7 @@ export default function RepairActions(props) {
     dispatch(showNotification({ message: "Tạo phiếu bảo hành thành công.", type: "success" }));
   };
 
-  const downloadPdf = () => {
+  const downloadPdf = async () => {
     if (pdfBlob) {
       const url = URL.createObjectURL(pdfBlob);
       const a = document.createElement("a");
@@ -140,48 +170,62 @@ export default function RepairActions(props) {
       document.body.appendChild(a);
       a.click();
       window.URL.revokeObjectURL(url);
+
+      const logPayload = {
+        RepairOrderId: repairOrderId,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: "Tải phiếu bảo hành",
+      };
+      await addRepairLog(logPayload, { id: repairOrderId });
     }
   };
 
   return (
     <div className={styles["dashboard__orderdetail__actions__buttons"]}>
-      {currentStatus === 1 ? (
-        <button onClick={handleAcceptOrder} className={styles["button"]}>
-          Tiếp nhận đơn
-        </button>
-      ) : null}
-      <button
-        onClick={handleAddAccessory}
-        className={currentStatus === 1 ? styles["button--disabled"] : styles["button"]}
-      >
-        Thêm/chỉnh sửa thông tin linh kiện
-      </button>
-      <select
-        disabled={currentStatus === 1}
-        name="status-change"
-        id="status-change"
-        onChange={handleStatus}
-        value={status}
-        style={{ opacity: currentStatus === 1 ? 0.3 : 1 }}
-      >
-        {statuses.map((item) => {
-          return (
-            <option key={item.value} value={item.value}>
-              {item.label}
+      {data.data.length !== 0 && (
+        <>
+          {currentStatus === 1 ? (
+            <button onClick={handleAcceptOrder} className={styles["button"]}>
+              Tiếp nhận đơn
+            </button>
+          ) : null}
+          <button onClick={handleAddAccessory} className={currentStatus === 1 ? styles["button--disabled"] : styles["button"]}>
+            Thêm/chỉnh sửa thông tin linh kiện
+          </button>
+          <select
+            disabled={currentStatus === 1}
+            name="status-change"
+            id="status-change"
+            onChange={handleStatus}
+            value={""}
+            style={{ opacity: currentStatus === 1 ? 0.3 : 1 }}
+          >
+            <option value="" disabled hidden>
+              Cập nhật trạng thái
             </option>
-          );
-        })}
-      </select>
-      <button
-        onClick={handleCreatePdf}
-        className={currentStatus === 1 || pdfBlob ? styles["button--disabled"] : styles["button"]}
-      >
-        Tạo phiếu bảo hành
-      </button>
-      {pdfBlob && (
-        <button onClick={downloadPdf} className={styles["button--light"]}>
-          Tải phiếu bảo hành về máy
-        </button>
+            {data.data.map((item) => {
+              return (
+                <option
+                  key={item.id}
+                  value={item.id}
+                  disabled={currentStatus === item.id}
+                  style={{ color: currentStatus === item.id ? "#ccc" : "white" }}
+                >
+                  {item.name}
+                </option>
+              );
+            })}
+          </select>
+          <button onClick={handleCreatePdf} className={currentStatus === 1 || pdfBlob ? styles["button--disabled"] : styles["button"]}>
+            Tạo phiếu bảo hành
+          </button>
+          {pdfBlob && (
+            <button onClick={downloadPdf} className={styles["button--light"]}>
+              Tải phiếu bảo hành về máy
+            </button>
+          )}
+        </>
       )}
     </div>
   );
