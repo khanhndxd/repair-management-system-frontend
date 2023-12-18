@@ -58,7 +58,9 @@ export default function CustomerDetail() {
         <h1>Chi tiết khách hàng</h1>
       </div>
       <div className={styles["dashboard__customerdetail__basic"]}>
-        <div className={styles["dashboard__customerdetail__basic__image"]}></div>
+        {/* <div className={styles["dashboard__customerdetail__basic__image"]}>
+          <span>&#9786;</span>
+        </div> */}
         <h2>{data.data.name}</h2>
         <p style={{ cursor: "pointer" }} onClick={handleUpdateCustomer}>
           Chỉnh sửa
@@ -70,6 +72,9 @@ export default function CustomerDetail() {
           <div className={styles["dashboard__customerdetail__info__detail__content"]}>
             <p>
               <strong>Địa chỉ:</strong> {data.data.address}
+            </p>
+            <p>
+              <strong>Email:</strong> {data.data.email}
             </p>
             <p>
               <strong>Số điện thoại:</strong> {data.data.phone}
@@ -90,12 +95,7 @@ export default function CustomerDetail() {
             <select name="activities" id="activities" onChange={handleActivities} value={activity}>
               {activities.map((item) => {
                 return (
-                  <option
-                    key={item.value}
-                    disabled={item.value === ""}
-                    hidden={item.value === ""}
-                    value={item.value}
-                  >
+                  <option key={item.value} disabled={item.value === ""} hidden={item.value === ""} value={item.value}>
                     {item.label}
                   </option>
                 );

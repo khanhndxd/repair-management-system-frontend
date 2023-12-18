@@ -12,8 +12,8 @@ export default function CustomerTable() {
 
   const router = useRouter();
   const tableData = useMemo(() => {
-    if(isLoading === false) {
-      return data.data
+    if (isLoading === false) {
+      return data.data;
     }
     return [];
   }, [isLoading, isFetching]);
@@ -41,7 +41,7 @@ export default function CustomerTable() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
+              <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]} style={{ fontWeight: "bold" }}>
                 Xem chi tiết
               </button>
             );
