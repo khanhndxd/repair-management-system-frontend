@@ -1,7 +1,8 @@
 import { addDays, format, parseISO, startOfWeek, endOfWeek, getDaysInMonth, isWithinInterval } from "date-fns";
+import viLocale from 'date-fns/locale/vi';
 
-const repairTypes = ["Bảo hành", "Sửa chữa"];
-const repairTasks = ["Vệ sinh máy tính", "Cài lại win", "Cài đặt phần mềm", "Sửa chữa phần mềm", "Bảo dưỡng định kỳ"];
+const repairTypes = ["Bảo hành", "Sửa chữa", "Đổi mới"];
+const repairTasks = ["Vệ sinh máy tính", "Cài đặt phần mềm", "Sửa chữa phần mềm", "Thay thế linh kiện", "Đổi mới"];
 const categories = [
   "Màn hình",
   "Nguồn máy tính",
@@ -18,6 +19,22 @@ const categories = [
   "PC",
   "Thiết bị ngoại vi",
 ];
+export const statuses = [
+  { value: 1, label: "Chờ xử lý" },
+  { value: 2, label: "Đã tiếp nhận" },
+  { value: 3, label: "Đang sửa chữa" },
+  { value: 4, label: "Đã chuyển sản phẩm về hãng" },
+  { value: 5, label: "Đã nhận sản phẩm từ hãng" },
+  { value: 6, label: "Đã sửa xong" },
+  { value: 7, label: "Đã hủy" },
+  { value: 8, label: "Đã hoàn thành" },
+  { value: 9, label: "Đã trả hàng" },
+];
+
+export const getStatusLabelByValue = (value) => {
+  const status = statuses.find((status) => status.value === value);
+  return status ? status.label : "Không xác định";
+};
 
 export const roles = {
   admin: "Admin",
@@ -83,7 +100,7 @@ export function preprocessingChartData(data, type, timeRange, year) {
     if (timeRange === "week") {
       // Sử dụng 'eeee' để hiển thị tên đầy đủ của ngày trong tuần
       const day = addDays(weekStart, index);
-      return format(day, "eeee");
+      return format(day, "eeee", { locale: viLocale });
     } else {
       return (index + 1).toString();
     }
@@ -193,7 +210,7 @@ function getDatasets(year, data, type, nameToGet, nameToAccess, isArray, totalUn
   return datasets;
 }
 
-function getDefaultDatasetNames(type, totalUnits) {
+export function getDefaultDatasetNames(type, totalUnits) {
   let datasets = {};
   if (type === "repairType") {
     for (let i = 0; i < repairTypes.length; i++) {
@@ -203,7 +220,7 @@ function getDefaultDatasetNames(type, totalUnits) {
         backgroundColor: getRandomColor(),
       };
     }
-  } else if (type === "repairProducts") {
+  } else if (type === "categories") {
     for (let i = 0; i < categories.length; i++) {
       datasets[categories[i]] = {
         label: categories[i],
