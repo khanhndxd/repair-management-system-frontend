@@ -4,9 +4,9 @@ import { useGetRepairOrderByStatusQuery } from "@/services/api/repairOrder/repai
 export default function RepairOrderCount({ info }) {
   const { data, isLoading, isFetching, isError } = useGetRepairOrderByStatusQuery(info.statusId);
 
-  if (isLoading || isFetching) return <span style={{ fontSize: "12px" }}>Đang tải...</span>;
-
   if (isError) return <span style={{ fontSize: "12px" }}>Có lỗi xảy ra</span>;
+
+  if (isLoading || isFetching) return <span style={{ fontSize: "12px" }}>Đang tải...</span>;
 
   let content;
   if (info.statusId === -1) {
@@ -24,9 +24,10 @@ export default function RepairOrderCount({ info }) {
 
 const RepairOrderPercent = ({ count }) => {
   const { data, isLoading, isFetching, isError } = useGetRepairOrderByStatusQuery(-1);
-  if (isLoading || isFetching) return <span style={{ fontSize: "12px" }}>Đang tải...</span>;
 
   if (isError) return <span style={{ fontSize: "12px" }}>Có lỗi xảy ra</span>;
+
+  if (isLoading || isFetching) return <span style={{ fontSize: "12px" }}>Đang tải...</span>;
 
   return <span>{((count / data.data) * 100).toFixed(2)}%</span>;
 };

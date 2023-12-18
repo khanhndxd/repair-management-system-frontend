@@ -3,16 +3,17 @@ import RepairOrderCount from "./RepairOrderCount";
 import Total from "./Total";
 
 export default function StatsOverallItem({ title, content, info }) {
+  let component;
   if (content === "count") {
-    content = <RepairOrderCount info={info} />;
+    component = <RepairOrderCount info={info} />;
   } else if (content === "total") {
-    content = <Total />;
+    component = <Total />;
   }
 
   return (
     <div className={styles["dashboard__stats__overall__box"]}>
       <p>{title}</p>
-      <h3>{content}</h3>
+      <h3>{component}</h3>
     </div>
   );
 }
