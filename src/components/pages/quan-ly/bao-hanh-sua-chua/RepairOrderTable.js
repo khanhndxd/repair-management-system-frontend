@@ -6,23 +6,10 @@ import { useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/app/loading";
 import { useDeleteRepairOrderMutation, useGetAllRepairOrdersQuery } from "@/services/api/repairOrder/repairOrderApi";
-import { useGetAllStatusesQuery } from "@/services/api/status/statusApi";
 import { useDispatch, useSelector } from "react-redux";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { showNotification } from "@/store/features/notificationSlice";
-import { roles } from "@/services/helper/helper";
-
-const statuses = {
-  1: { content: "Chờ xử lý", color: "#3D7EC5" },
-  2: { content: "Đã tiếp nhận", color: "#3D7EC5" },
-  3: { content: "Đang sửa chữa", color: "#3D7EC5" },
-  4: { content: "Đã chuyển sản phẩm về hãng", color: "#3D7EC5" },
-  5: { content: "Đã nhận sản phẩm từ hãng", color: "#3D7EC5" },
-  6: { content: "Đã sửa xong", color: "#3D7EC5" },
-  7: { content: "Đã hủy", color: "#3D7EC5" },
-  8: { content: "Đã hoàn thành", color: "#3D7EC5" },
-  9: { content: "Đã trả hàng", color: "#3D7EC5" },
-};
+import { getStatusLabelByValue, roles, statuses } from "@/services/helper/helper";
 
 export default function RepairOrderTable() {
   const { data, isLoading, isFetching, isError } = useGetAllRepairOrdersQuery();
@@ -49,6 +36,7 @@ export default function RepairOrderTable() {
         Header: "Trạng thái",
         accessor: "status",
         Cell: ({ value }) => {
+          const label = getStatusLabelByValue(+value);
           return (
             <div
               style={{
@@ -56,10 +44,10 @@ export default function RepairOrderTable() {
                 height: "100%",
                 padding: "8px 0px",
                 fontWeight: "bold",
-                backgroundColor: statuses[value].color,
+                backgroundColor: "#3D7EC5",
               }}
             >
-              {statuses[value].content}
+              {label}
             </div>
           );
         },
@@ -96,13 +84,17 @@ export default function RepairOrderTable() {
           Cell: ({ row }) => {
             return (
               <>
-                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
+                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]} style={{ fontWeight: "bold" }}>
                   Xem chi tiết
                 </button>
                 {auth.role === roles.admin ? (
                   <>
                     &nbsp;|&nbsp;
-                    <button onClick={() => handleDelete(row.values.id)} className={styles["no-effect-button"]}>
+                    <button
+                      onClick={() => handleDelete(row.values.id)}
+                      className={styles["no-effect-button"]}
+                      style={{ fontWeight: "bold" }}
+                    >
                       Xóa
                     </button>
                   </>
@@ -154,7 +146,7 @@ export default function RepairOrderTable() {
 
   if (isError) return <div>An error has occurred!</div>;
 
-  if (isLoading) return <Loading />;
+  if (isLoading || isFetching) return <Loading />;
 
   return (
     <div className={styles["dashboard__orders__content__table-container"]}>
@@ -273,13 +265,8 @@ const ColumnFilter = ({ column }) => {
 
 const StatusFilter = ({ column }) => {
   const { filterValue, setFilter } = column;
-  const { data, isLoading, isFetching, isError } = useGetAllStatusesQuery();
   const router = useRouter();
   const pathname = usePathname();
-
-  if (isError) return <div>An error has occurred!</div>;
-
-  if (isLoading) return <Loading />;
 
   return (
     <select
@@ -289,9 +276,9 @@ const StatusFilter = ({ column }) => {
       }}
     >
       <option value="">Tất cả</option>
-      {data?.data.map((item) => (
-        <option key={item.id} value={item.id}>
-          {item.name}
+      {statuses.map((item) => (
+        <option key={item.value} value={item.value}>
+          {item.label}
         </option>
       ))}
     </select>
