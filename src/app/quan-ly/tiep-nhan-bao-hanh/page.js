@@ -13,16 +13,18 @@ import { reset } from "@/store/features/repairOrderSlice";
 import { convertFromVND } from "@/services/helper/helper";
 import { useAddRepairTaskMutation } from "@/services/api/repairTask/repairTaskApi";
 import { useAddRepairCustomerProductMutation } from "@/services/api/repairCustomerProduct/repairCustomerProductApi";
+import { useAddRepairLogMutation } from "@/services/api/repairLog/repairLogApi";
 
 export default function NewRepairOrder() {
   const router = useRouter();
   const dispatch = useDispatch();
+  const repairOrder = useSelector((state) => state.repairOrder);
+  const auth = useSelector((state) => state.auth);
   const [addRepairOrder, { loading: repairOrderLoading }] = useAddRepairOrderMutation();
   const [addRepairProduct, { loading: productLoading }] = useAddRepairProductMutation();
   const [addRepairTask, { loading: newProductLoading }] = useAddRepairTaskMutation();
-  const [addRepairCustomerProduct, { loading: repairCustomerProductLoading }] =
-    useAddRepairCustomerProductMutation();
-  const repairOrder = useSelector((state) => state.repairOrder);
+  const [addRepairCustomerProduct, { loading: repairCustomerProductLoading }] = useAddRepairCustomerProductMutation();
+  const [addRepairLog, { loading: logLoading }] = useAddRepairLogMutation();
 
   useEffect(() => {
     if (repairOrder.isOrderFromCustomerPage === false) {
@@ -31,12 +33,18 @@ export default function NewRepairOrder() {
   }, []);
 
   const handleCreateRepairOrder = async (data) => {
+    if ((repairOrder.products.length === 0 && repairOrder.newRepairProducts.length === 0) || repairOrder.tasks.length === 0) {
+      dispatch(showNotification({ message: "Chưa chọn sản phẩm hoặc công việc nào", type: "warning" }));
+      return null;
+    }
+
     try {
       dispatch(showLoading({ content: "Đang tạo đơn bảo hành..." }));
       let payload = {
         CustomerId: +data.customer.id,
         CreatedById: data.creator,
         RepairedById: data.receiver,
+        ReceivedById: data.technician,
         CreatedAt: data.createdDate,
         ReceiveAt: data.receiveDate,
         ReceiveType: data.receiveType,
@@ -59,7 +67,7 @@ export default function NewRepairOrder() {
           return { RepairOrderId: result.data.data, purchasedProductId: item.id, Description: item.description };
         });
       }
-      const repairProductResult = await addRepairProduct(repairProductsPayload);
+      await addRepairProduct(repairProductsPayload);
 
       // Cập nhật công việc
       dispatch(showLoading({ content: "Đang cập nhật công việc bảo hành..." }));
@@ -72,12 +80,10 @@ export default function NewRepairOrder() {
         });
       }
 
-      const repairTaskResult = await addRepairTask(repairTasksPayload);
-      // console.log(repairTaskResult);
+      await addRepairTask(repairTasksPayload);
 
       // Cập nhật sản phẩm mới (nếu có)
       if (repairOrder.newRepairProducts.length !== 0) {
-        // Thêm sản phẩm mới vào bảng RepairCustomerOrder
         let repairCustomerProductPayload = repairOrder.newRepairProducts.map((item) => {
           return {
             CustomerProductId: item.realId,
@@ -85,8 +91,16 @@ export default function NewRepairOrder() {
             Description: item.description,
           };
         });
-        const repairCustomerProductResult = await addRepairCustomerProduct(repairCustomerProductPayload);
+        await addRepairCustomerProduct(repairCustomerProductPayload);
       }
+
+      let logPayload = {
+        RepairOrderId: +result.data.data,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: "Tạo đơn",
+      };
+      await addRepairLog(logPayload, { id: +result.data.data });
 
       router.push(`/quan-ly/chi-tiet-don/${result.data.data}`);
     } catch (err) {
@@ -104,8 +118,9 @@ export default function NewRepairOrder() {
         mode={"create"}
         initialValues={{
           customer: repairOrder.customer,
-          creator: "1",
+          creator: auth.userId,
           receiver: null,
+          technician: null,
           createdDate: format(new Date(), "yyyy-MM-dd"),
           receiveDate: format(new Date(), "yyyy-MM-dd"),
           receiveType: "",
