@@ -11,7 +11,7 @@ function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-export default function CustomerForm({ control, errors, getValues }) {
+export default function CustomerForm({ control, errors, getValues, mode }) {
   const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.repairOrder.customer);
@@ -32,7 +32,12 @@ export default function CustomerForm({ control, errors, getValues }) {
 
   if (isError) return <div>Có lỗi xảy ra!</div>;
 
-  if (isLoading) return <Loading />;
+  if (isLoading)
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
 
   return (
     <div className={styles["dashboard__neworder__content__info__box__customer"]}>
@@ -54,6 +59,7 @@ export default function CustomerForm({ control, errors, getValues }) {
                 field.onChange(e);
                 handleInputChange(e);
               }}
+              disabled={mode === "edit"}
             />
             {suggestions.length !== 0 ? (
               <div className={styles["suggestions"]}>
@@ -77,11 +83,7 @@ export default function CustomerForm({ control, errors, getValues }) {
           </div>
         )}
       />
-      {errors.customer && (
-        <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
-          Không được để trống khách hàng
-        </span>
-      )}
+      {errors.customer && <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Không được để trống khách hàng</span>}
       <div className={styles["dashboard__neworder__content__info__box__customer__detail"]}>
         <div className={styles["dashboard__neworder__content__info__box__customer__detail__control"]}>
           <p>Tên khách hàng</p>

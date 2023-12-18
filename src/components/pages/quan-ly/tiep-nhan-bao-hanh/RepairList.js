@@ -1,22 +1,22 @@
 "use client";
 import styles from "@/styles/main.module.scss";
 import { useTable } from "react-table";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { showNotification } from "@/store/features/notificationSlice";
 import { showDialog } from "@/store/features/dialogSlice";
 import { removeTasksProducts } from "@/store/features/repairOrderSlice";
+import ApplyWarrantyPolicy from "./ApplyWarrantyPolicy";
 
-export default function RepairList() {
+export default function RepairList({ watch, resetField }) {
+  const repairTypeFieldValue = watch("repairType");
+  const [policyId, setPolicyId] = useState(-1);
+  const [isOpenApplyWarranty, setIsApplyWarranty] = useState(false);
   const repairOrder = useSelector((state) => state.repairOrder);
   const dispatch = useDispatch();
 
   const data = useMemo(() => {
-    return preprocessingRepairListData(
-      repairOrder.products,
-      repairOrder.tasks,
-      repairOrder.newRepairProducts
-    );
+    return preprocessingRepairListData(repairOrder.products, repairOrder.tasks, repairOrder.newRepairProducts);
   }, [repairOrder.products, repairOrder.tasks, repairOrder.newRepairProducts]);
 
   const columns = useMemo(() => {
@@ -29,6 +29,10 @@ export default function RepairList() {
 
   // Cac functions de chinh sua du lieu tren bang
   const handleDelete = (item) => {
+    const isProduct = repairOrder.products.some((product) => product.serial == item.id);
+    if (isProduct === true) {
+      resetField("repairType", { defaultValue: null });
+    }
     dispatch(removeTasksProducts(item));
   };
 
@@ -88,7 +92,7 @@ export default function RepairList() {
 
   const handleAddPurchasedProduct = () => {
     if (repairOrder.customer === null) {
-      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "warning" }));
       return;
     }
     dispatch(
@@ -101,31 +105,105 @@ export default function RepairList() {
 
   const handleAddCustomerProduct = () => {
     if (repairOrder.customer === null) {
-      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "warning" }));
       return;
     }
     dispatch(showDialog({ title: "Chọn sản phẩm của khách hàng", content: "add-customer-product" }));
-  }
+  };
 
   const handleAddNewRepairProduct = () => {
     if (repairOrder.customer === null) {
-      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "error" }));
+      dispatch(showNotification({ message: "Chưa chọn khách hàng", type: "warning" }));
       return;
     }
     dispatch(showDialog({ title: "Thêm sản phẩm mới", content: "add-new-product" }));
   };
 
+  const handleOpenApplyWarrantyDialog = (flag) => {
+    setIsApplyWarranty(flag);
+  };
+
+  const handleApplyPolicy = () => {
+    if (repairOrder.customer === null && repairOrder.products.length === 0) {
+      dispatch(showNotification({ message: "Chưa chọn khách hàng hoặc chưa chọn sản phẩm nào", type: "warning" }));
+      return;
+    } else {
+      if (
+        repairOrder.products[0].isWarrantyExpired === false &&
+        repairOrder.isWarranted === true &&
+        (repairTypeFieldValue !== "" || repairTypeFieldValue !== null) &&
+        repairOrder.products[0].category.warrantyPolicy.id
+      ) {
+        setPolicyId(repairOrder.products[0].category.warrantyPolicy.id);
+        handleOpenApplyWarrantyDialog(true);
+      } else {
+        dispatch(showNotification({ message: "Chưa đủ điều kiện bảo hành", type: "warning" }));
+        return;
+      }
+    }
+  };
+
   return (
     <>
       <div className={styles["dashboard__neworder__content__product__actions"]}>
-        <button type="button" onClick={handleAddPurchasedProduct} className={styles["button-outline"]}>
+        <button
+          disabled={repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0}
+          type="button"
+          onClick={handleAddPurchasedProduct}
+          className={
+            repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0
+              ? styles["button-outline--disabled"]
+              : styles["button-outline"]
+          }
+        >
           Chọn sản phẩm đã mua
         </button>
-        <button type="button" onClick={handleAddCustomerProduct} className={styles["button-outline"]}>
+        <button
+          disabled={repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0}
+          type="button"
+          onClick={handleAddCustomerProduct}
+          className={
+            repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0
+              ? styles["button-outline--disabled"]
+              : styles["button-outline"]
+          }
+        >
           Chọn sản phẩm của khách hàng
         </button>
-        <button onClick={handleAddNewRepairProduct} type="button" className={styles["button-outline"]}>
+        <button
+          disabled={repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0}
+          onClick={handleAddNewRepairProduct}
+          type="button"
+          className={
+            repairOrder.products.length !== 0 || repairOrder.newRepairProducts.length !== 0
+              ? styles["button-outline--disabled"]
+              : styles["button-outline"]
+          }
+        >
           Tạo mới sản phẩm
+        </button>
+        <button
+          disabled={
+            repairOrder.products.length === 0 ||
+            repairOrder.isWarranted === false ||
+            repairTypeFieldValue === "" ||
+            repairTypeFieldValue === null ||
+            repairOrder.products[0]?.isWarrantyExpired === true
+          }
+          onClick={handleApplyPolicy}
+          type="button"
+          className={
+            repairOrder.products.length === 0 ||
+            repairOrder.isWarranted === false ||
+            repairTypeFieldValue === "" ||
+            repairTypeFieldValue === null ||
+            repairOrder.products[0]?.isWarrantyExpired === true
+              ? styles["button-outline--disabled"]
+              : styles["button--light"]
+          }
+          style={{ marginLeft: "auto" }}
+        >
+          Áp dụng chính sách bảo hành
         </button>
       </div>
       <div className={styles["dashboard__neworder__content__product__table-container"]}>
@@ -169,6 +247,7 @@ export default function RepairList() {
           </tbody>
         </table>
       </div>
+      {isOpenApplyWarranty && <ApplyWarrantyPolicy handleOpen={handleOpenApplyWarrantyDialog} policyId={policyId} />}
     </>
   );
 }

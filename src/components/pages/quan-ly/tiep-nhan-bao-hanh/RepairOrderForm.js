@@ -1,5 +1,4 @@
 "use client";
-
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import styles from "@/styles/main.module.scss";
@@ -14,6 +13,7 @@ export default function RepairOrderForm(props) {
     control,
     register,
     handleSubmit,
+    resetField,
     getValues,
     setValue,
     watch,
@@ -33,7 +33,7 @@ export default function RepairOrderForm(props) {
         <div className={styles["dashboard__neworder__content__info"]}>
           <div className={styles["dashboard__neworder__content__info__box"]}>
             <h3>&#10112; Thông tin khách hàng</h3>
-            <CustomerForm control={control} errors={errors} getValues={getValues} />
+            <CustomerForm control={control} errors={errors} getValues={getValues} mode={mode} />
           </div>
           <div className={styles["dashboard__neworder__content__info__box"]}>
             <h3>&#10113; Thông tin đơn</h3>
@@ -42,7 +42,7 @@ export default function RepairOrderForm(props) {
         </div>
         <div className={styles["dashboard__neworder__content__product"]}>
           <h3>&#10114; Thông tin bảo hành</h3>
-          <RepairList />
+          <RepairList watch={watch} resetField={resetField} />
           <p style={{ marginLeft: "auto" }}>
             Tổng chi phí: <strong style={{ fontSize: "24px" }}>{repairOrder?.total}</strong>
           </p>
@@ -50,14 +50,7 @@ export default function RepairOrderForm(props) {
         <div className={styles["dashboard__neworder__content__info"]}>
           <div className={styles["dashboard__neworder__content__info__box"]}>
             <h3>&#10115; Ghi chú</h3>
-            <textarea
-              id="ghi-chu"
-              name="ghi-chu"
-              rows="10"
-              cols="50"
-              placeholder="Nhập ghi chú"
-              {...register("note")}
-            />
+            <textarea id="ghi-chu" name="ghi-chu" rows="10" cols="50" placeholder="Nhập ghi chú" {...register("note")} />
           </div>
         </div>
       </div>
