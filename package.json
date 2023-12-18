@@ -9,10 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@microsoft/signalr": "^8.0.0",
     "@reduxjs/toolkit": "^1.9.6",
+    "bufferutil": "^4.0.8",
     "chart.js": "^4.4.0",
     "cookie": "^0.6.0",
     "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
+    "encoding": "^0.1.13",
     "jsonwebtoken": "^9.0.2",
     "next": "latest",
     "react": "latest",
@@ -20,7 +24,8 @@
     "react-dom": "latest",
     "react-hook-form": "^7.47.0",
     "react-redux": "^8.1.2",
-    "react-table": "^7.8.0"
+    "react-table": "^7.8.0",
+    "utf-8-validate": "^5.0.10"
   },
   "devDependencies": {
     "eslint": "latest",
