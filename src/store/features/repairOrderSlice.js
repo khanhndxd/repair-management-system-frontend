@@ -1,4 +1,4 @@
-import { convertToVND } from "@/services/helper/helper";
+import { convertFromVND, convertToVND } from "@/services/helper/helper";
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
@@ -11,6 +11,7 @@ const initialState = {
   anyProduct: false,
   total: convertToVND(0),
   isWarranted: false,
+  isExchange: false,
   isOrderFromCustomerPage: false,
   newRepairProducts: [],
 };
@@ -23,22 +24,37 @@ export const repairOrderSlice = createSlice({
       state.customer = action.payload;
     },
     addRepairType: (state, action) => {
-      state.isWarranted = action.payload.object.id === 1;
-      let alpha = state.isWarranted === true ? 0 : 1;
+      state.isWarranted = action.payload.object.name.localeCompare("Bảo hành", "vi", { sensitivity: "base" }) === 0;
+      state.isExchange = action.payload.object.name.localeCompare("Đổi mới", "vi", { sensitivity: "base" }) === 0;
 
-      if (alpha === 1) {
+      if (state.isWarranted === true) {
+        state.total = convertToVND(0);
+      }
+
+      if (state.isWarranted === false) {
         state.total = state.tasks.reduce((acc, currentItem) => {
           return acc + currentItem.price;
         }, 0);
-        state.total = convertToVND(state.total * alpha);
-      } else {
-        state.total = convertToVND(0);
+        state.total = convertToVND(state.total);
+      }
+
+      if (state.isExchange === true) {
+        state.total = state.tasks.reduce((acc, currentItem) => {
+          return acc + currentItem.price;
+        }, 0);
+        const productOriginalPrice = state.products.reduce((acc, currentItem) => {
+          if (currentItem.isWarrantyExpired === true) {
+            return acc + currentItem.originalPrice;
+          }
+        }, 0);
+        if (productOriginalPrice) {
+          state.total += productOriginalPrice;
+        }
+        state.total = convertToVND(state.total);
       }
     },
     addNewRepairProduct: (state, action) => {
-      const isDuplicateId = state.newRepairProducts.some(
-        (product) => product.id == "SPM" + action.payload.object.id
-      );
+      const isDuplicateId = state.newRepairProducts.some((product) => product.id == "SPM" + action.payload.object.id);
       if (!isDuplicateId) {
         state.newRepairProducts.push({
           id: "SPM" + action.payload.object.id,
@@ -62,7 +78,10 @@ export const repairOrderSlice = createSlice({
           id: action.payload.object.id,
           serial: action.payload.object.productSerial,
           name: action.payload.object.productName,
-          description: action.payload.object.description ? action.payload.object.description : ""
+          originalPrice: action.payload.object.originalPrice,
+          isWarrantyExpired: action.payload.object.isWarrantyExpired,
+          category: action.payload.object.category,
+          description: action.payload.object.description ? action.payload.object.description : "",
         });
         state.tasksProducts.push({
           id: action.payload.object.productSerial,
@@ -70,6 +89,19 @@ export const repairOrderSlice = createSlice({
           type: "product",
         });
         state.anyProduct = true;
+        let alpha = state.isWarranted === true ? 0 : 1;
+
+        if (state.isExchange === true) {
+          const productOriginalPrice = state.products.reduce((acc, currentItem) => {
+            if (currentItem.isWarrantyExpired === true) {
+              return acc + currentItem.originalPrice;
+            }
+          }, 0);
+          if (productOriginalPrice) {
+            state.total = convertFromVND(state.total) + productOriginalPrice;
+            state.total = convertToVND(state.total * alpha);
+          }
+        }
       }
     },
     addTask: (state, action) => {
@@ -79,7 +111,7 @@ export const repairOrderSlice = createSlice({
           id: action.payload.object.id,
           name: action.payload.object.name,
           price: action.payload.object.price,
-          description: action.payload.object.description ? action.payload.object.description : ""
+          description: action.payload.object.description ? action.payload.object.description : "",
         });
         state.tasksProducts.push({
           id: action.payload.object.id,
@@ -92,6 +124,18 @@ export const repairOrderSlice = createSlice({
         state.total = state.tasks.reduce((acc, currentItem) => {
           return acc + currentItem.price;
         }, 0);
+
+        if (state.isExchange === true) {
+          const productOriginalPrice = state.products.reduce((acc, currentItem) => {
+            if (currentItem.isWarrantyExpired === true) {
+              return acc + currentItem.originalPrice;
+            }
+          }, 0);
+          if (productOriginalPrice) {
+            state.total += productOriginalPrice;
+          }
+        }
+
         state.total = convertToVND(state.total * alpha);
       }
     },
@@ -125,6 +169,19 @@ export const repairOrderSlice = createSlice({
       state.total = state.tasks.reduce((acc, currentItem) => {
         return acc + currentItem.price;
       }, 0);
+
+      if (state.isExchange === true) {
+        const productOriginalPrice = state.products.reduce((acc, currentItem) => {
+          if (currentItem.isWarrantyExpired === true) {
+            return acc + currentItem.originalPrice;
+          }
+        }, 0);
+
+        if (productOriginalPrice) {
+          state.total += productOriginalPrice;
+        }
+      }
+
       state.total = convertToVND(state.total * alpha);
     },
     removeTasksProducts: (state, action) => {
@@ -148,6 +205,17 @@ export const repairOrderSlice = createSlice({
       state.total = state.tasks.reduce((acc, currentItem) => {
         return acc + currentItem.price;
       }, 0);
+
+      if (state.isExchange === true) {
+        const productOriginalPrice = state.products.reduce((acc, currentItem) => {
+          if (currentItem.isWarrantyExpired === true) {
+            return acc + currentItem.originalPrice;
+          }
+        }, 0);
+        if (productOriginalPrice) {
+          state.total += productOriginalPrice;
+        }
+      }
       state.total = convertToVND(state.total * alpha);
     },
     isOrderFromCustomerPage: (state, action) => {

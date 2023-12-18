@@ -6,12 +6,14 @@ const isBrowser = typeof document !== "undefined";
 
 // lấy cookie
 const cookies = isBrowser ? parse(document.cookie || "") : {};
+const userId = cookies.userId || null;
 const user = cookies.user || null;
 const role = cookies.role || null;
 const token = cookies.token || null;
 const refreshToken = cookies.refreshToken || null;
 
 const initialState = {
+  userId: userId,
   user: user,
   role: role,
   token: token,
@@ -30,11 +32,13 @@ const authSlice = createSlice({
         // Lưu user và token vào state
         state.user = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"];
         state.role = decodedToken["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        state.userId = decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"];
         state.token = token;
         state.refreshToken = refreshToken;
 
         // Lưu vào cookie
         setMultipleCookies([
+          { name: "userId", value: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier"] },
           { name: "user", value: decodedToken["http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name"] },
           {
             name: "role",
@@ -46,6 +50,7 @@ const authSlice = createSlice({
       } catch (error) {
         console.error("Lỗi giải mã token:", error);
         setMultipleCookies([
+          { name: "userId", value: "User" },
           { name: "user", value: "User" },
           { name: "user", value: "User" },
           { name: "token", value: token },
@@ -55,13 +60,16 @@ const authSlice = createSlice({
     },
     logOut: (state, action) => {
       setMultipleCookies([
+        { name: "userId", options: { maxAge: 0 } },
         { name: "user", options: { maxAge: 0 } },
         { name: "role", options: { maxAge: 0 } },
         { name: "token", options: { maxAge: 0 } },
         { name: "refreshToken", options: { maxAge: 0 } },
       ]);
 
+      state.userId = null;
       state.user = null;
+      state.role = null;
       state.token = null;
       state.refreshToken = null;
 

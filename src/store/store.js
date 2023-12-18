@@ -9,6 +9,8 @@ import repairOrderReducer from "./features/repairOrderSlice";
 import accessoryCartReducer from "./features/accessoryCartSlice";
 import authReducer from "./features/authSlice";
 import { baseApi } from "@/services/api/baseApi";
+import signalRReducer from "@/services/signalr/signalrSlice";
+import signalRMiddleware from "@/services/signalr/signalrMiddleware";
 
 export const store = configureStore({
   reducer: {
@@ -19,9 +21,17 @@ export const store = configureStore({
     repairOrder: repairOrderReducer,
     accessoryCart: accessoryCartReducer,
     auth: authReducer,
+    signalr: signalRReducer,
     [baseApi.reducerPath]: baseApi.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(baseApi.middleware),
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: ["signalR/startConnection", "signalR/stopConnection"],
+        ignoredActionPaths: ["payload", "meta.baseQueryMeta", "meta.arg"],
+        ignoredPaths: ["signalr.connection", "api.queries.getAllRepairOrdersWithQueryString"],
+      },
+    }).concat(baseApi.middleware, signalRMiddleware),
 });
