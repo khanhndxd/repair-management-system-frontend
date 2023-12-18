@@ -12,6 +12,7 @@ import { addAccessory } from "@/store/features/accessoryCartSlice";
 import { useParams } from "next/navigation";
 import { useAddRepairAccessoryMutation } from "@/services/api/repairAccessory/repairAccessoryApi";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
+import { useAddRepairLogMutation } from "@/services/api/repairLog/repairLogApi";
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -20,9 +21,11 @@ function removeAccents(str) {
 export default function AddAccessoryForm() {
   const { data, isLoading, isFetching, isError } = useGetAllAccessoryQuery();
   const [addRepairAccessory, { isLoading: repairAccessoryLoading }] = useAddRepairAccessoryMutation();
+  const [addRepairLog, { loading }] = useAddRepairLogMutation();
   const params = useParams();
   const dialog = useSelector((state) => state.dialog);
   const accessory = useSelector((state) => state.accessoryCart);
+  const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const [suggestions, setSuggestions] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -35,15 +38,29 @@ export default function AddAccessoryForm() {
   } = useForm({});
 
   const onSubmit = async (data) => {
-    if (accessory.accessories.length === 0) {
-      dispatch(showNotification({ message: "Không có linh kiện nào để thêm hay chỉnh sửa", type: "error" }));
-      return false;
+    dispatch(showLoading({ content: "Đang cập nhật linh kiện..." }));
+    try {
+      let repairAccessoryPayload = {};
+      if (accessory.accessories.length === 0) {
+        repairAccessoryPayload = [{ repairOrderId: +params.id, accessoryId: -1 }];
+      } else {
+        repairAccessoryPayload = prepareRepairAccessoryData(params.id, accessory.accessories);
+      }
+      await addRepairAccessory(repairAccessoryPayload, { id: params.id });
+      let logPayload = {
+        RepairOrderId: +params.id,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: "Cập nhật linh kiện",
+      };
+
+      await addRepairLog(logPayload, { id: +params.id });
+
+    } catch (err) {
+      console.log(err)
     }
-    dispatch(showLoading({ content: "Đang thêm linh kiện..." }));
-    const processedData = prepareRepairAccessoryData(params.id, accessory.accessories);
-    await addRepairAccessory(processedData);
     dispatch(hideLoading());
-    dispatch(showNotification({ message: "Thêm linh kiện thành công", type: "success" }));
+    dispatch(showNotification({ message: "Cập nhật linh kiện thành công", type: "success" }));
     dispatch(hideDialog());
   };
 
@@ -55,9 +72,7 @@ export default function AddAccessoryForm() {
     const value = e.target.value;
     setInputValue(value);
     const lowerCaseValue = removeAccents(value.toLowerCase());
-    const newSuggestions = data?.data.filter((accessory) =>
-      removeAccents(accessory.name.toLowerCase()).includes(lowerCaseValue)
-    );
+    const newSuggestions = data?.data.filter((accessory) => removeAccents(accessory.name.toLowerCase()).includes(lowerCaseValue));
     setSuggestions(newSuggestions);
   };
 
@@ -67,9 +82,7 @@ export default function AddAccessoryForm() {
 
   return (
     <form
-      className={
-        dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]
-      }
+      className={dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]}
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
@@ -120,11 +133,7 @@ export default function AddAccessoryForm() {
           </div>
         )}
       />
-      {errors.accessory && (
-        <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
-          Chưa chọn linh kiện nào
-        </span>
-      )}
+      {errors.accessory && <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Chưa chọn linh kiện nào</span>}
       <AccessoryCart />
       <div className={styles["dialog__content__box__actions"]}>
         <button onClick={handleCloseForm} className={styles["button"]}>

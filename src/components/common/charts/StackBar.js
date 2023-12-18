@@ -5,12 +5,14 @@ import { Bar } from "react-chartjs-2";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export const options = {
+  maintainAspectRatio: false,
   responsive: true,
   scales: {
     x: {
       stacked: true,
     },
     y: {
+      suggestedMax: 1.1,
       stacked: true,
       ticks: {
         stepSize: 1,
@@ -19,7 +21,7 @@ export const options = {
   },
   plugins: {
     legend: {
-      position: "top",
+      position: "bottom",
       display: true,
     },
     title: {
@@ -30,17 +32,6 @@ export const options = {
     tooltip: {
       callbacks: {
         label: function (context) {
-          // const label = context.label || "";
-          // const value = context.formattedValue;
-          // const dataset = context.dataset;
-          // const data = dataset.data;
-          // const total = data.reduce((acc, currentValue) => acc + currentValue, 0);
-          // if (total !== 0) {
-          //   const percentage = ((value / total) * 100).toFixed(2);
-          //   return `${label}: ${value} (${percentage}%)`;
-          // } else {
-          //   return `${label}: ${value}`;
-          // }
         },
       },
     },
@@ -49,5 +40,9 @@ export const options = {
 
 export default function StackBar({ chartData, chartTitle }) {
   options.plugins.title.text = chartTitle || options.plugins.title.text;
-  return <Bar data={chartData} options={options} />;
+  return (
+    <div style={{ width: "80%", height: "100%" }}>
+      <Bar data={chartData} options={options} />
+    </div>
+  );
 }

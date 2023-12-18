@@ -8,7 +8,6 @@ import styles from "@/styles/main.module.scss";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { isAfter, differenceInDays } from "date-fns";
 
 export default function AddPurchasedProductForm() {
   const [suggestions, setSuggestions] = useState([]);
@@ -16,9 +15,7 @@ export default function AddPurchasedProductForm() {
   const dispatch = useDispatch();
   const dialog = useSelector((state) => state.dialog);
   const repairOrder = useSelector((state) => state.repairOrder);
-  const { currentData, isLoading, isFetching, isError, error } = useGetPurchaseOrderByCustomerIdQuery(
-    repairOrder.customer.id
-  );
+  const { currentData, isLoading, isFetching, isError, error } = useGetPurchaseOrderByCustomerIdQuery(repairOrder.customer.id);
   const {
     control,
     register,
@@ -45,9 +42,7 @@ export default function AddPurchasedProductForm() {
     for (let i = 0; i < currentData.data.length; i++) {
       for (let j = 0; j < currentData.data[i].purchaseProducts.length; j++) {
         if (
-          removeAccents(currentData.data[i].purchaseProducts[j].productSerial.toLowerCase()).includes(
-            lowerCaseValue
-          ) ||
+          removeAccents(currentData.data[i].purchaseProducts[j].productSerial.toLowerCase()).includes(lowerCaseValue) ||
           currentData.data[i].id.toString().includes(lowerCaseValue)
         ) {
           newSuggestions.push(currentData.data[i].purchaseProducts[j]);
@@ -71,13 +66,11 @@ export default function AddPurchasedProductForm() {
     return <div>Có lỗi xảy ra!</div>;
   }
 
-  if (isLoading) return <Loading />;
+  if (isLoading || isFetching) return <Loading />;
 
   return (
     <form
-      className={
-        dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]
-      }
+      className={dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]}
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
@@ -104,7 +97,6 @@ export default function AddPurchasedProductForm() {
             {suggestions.length !== 0 ? (
               <div className={styles["suggestions"]}>
                 {suggestions.map((suggestion) => {
-                  const { isExpired, daysLeft } = checkValidWarranty(suggestion.warrantyPeriod);
                   return (
                     <div
                       key={suggestion.id}
@@ -118,10 +110,12 @@ export default function AddPurchasedProductForm() {
                         {suggestion.productName} | Serial: {suggestion.productSerial} |{" "}
                         <span
                           style={{
-                            color: isExpired === true ? "#ff9966" : "#5dac51",
+                            color: suggestion.isWarrantyExpired === true ? "#ff9966" : "#5dac51",
                           }}
                         >
-                          {isExpired === true ? "Hết hạn hoặc không có bảo hành" : `Còn hạn bảo hành (${daysLeft} ngày)`}
+                          {suggestion.isWarrantyExpired === true
+                            ? "Hết hạn hoặc không có bảo hành"
+                            : `Còn hạn bảo hành (${suggestion.daysLeftInWarranty} ngày)`}
                         </span>
                       </span>
                     </div>
@@ -132,9 +126,7 @@ export default function AddPurchasedProductForm() {
           </div>
         )}
       />
-      {errors["purchased-product"] && (
-        <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Chưa chọn sản phẩm</span>
-      )}
+      {errors["purchased-product"] && <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Chưa chọn sản phẩm</span>}
       <div className={styles["dialog__content__box__actions"]}>
         <button onClick={handleCloseForm} className={styles["button"]}>
           Hủy
@@ -149,12 +141,4 @@ export default function AddPurchasedProductForm() {
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-function checkValidWarranty(dt) {
-  const date = new Date(dt);
-  const now = new Date();
-  const isExpired = isAfter(now, date);
-  const daysLeft = differenceInDays(date, now);
-
-  return { isExpired, daysLeft };
 }

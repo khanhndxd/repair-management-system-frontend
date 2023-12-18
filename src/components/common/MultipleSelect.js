@@ -1,21 +1,11 @@
 "use client";
-import { convertToVND, isContainValueInArray, isContainValueInArrayOfObject } from "@/services/helper/helper";
+import { convertToVND, isContainValueInArrayOfObject } from "@/services/helper/helper";
 import styles from "@/styles/main.module.scss";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function MultipleSelect(props) {
-  const {
-    register,
-    errors,
-    setValue,
-    name,
-    data,
-    watch,
-    reduxDataStore,
-    addToReduxStore,
-    removeFromReduxStore,
-  } = props;
+  const { register, errors, setValue, name, data, watch, reduxDataStore, addToReduxStore, removeFromReduxStore } = props;
   const dispatch = useDispatch();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
 
@@ -55,10 +45,7 @@ export default function MultipleSelect(props) {
             })}
           </>
         )}
-        <span
-          className={styles["multiple-select__header__arrow"]}
-          onClick={() => setIsOpenDropdown((prev) => !prev)}
-        >
+        <span className={styles["multiple-select__header__arrow"]} onClick={() => setIsOpenDropdown((prev) => !prev)}>
           &#10094;
         </span>
       </div>

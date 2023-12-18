@@ -8,6 +8,10 @@ import AddAccessoryForm from "./AddAccessoryForm";
 import UpdateDescriptionForm from "./UpdateDescriptionForm";
 import AddNewProductForm from "./AddNewProductForm";
 import AddCustomerProductForm from "./AddCustomerProductForm";
+import ChangePasswordForm from "../pages/quan-ly/tai-khoan/ChangePasswordForm";
+import UpdateAccountInfoForm from "../pages/quan-ly/tai-khoan/UpdateAccountInfoForm";
+import ChangeRoleForm from "../pages/quan-ly/tai-khoan/ChangeRoleForm";
+import NewAccountForm from "../pages/quan-ly/tai-khoan/NewAccountForm";
 
 const content = {
   "add-customer": <NewCustomerForm />,
@@ -16,7 +20,11 @@ const content = {
   "add-accessory": <AddAccessoryForm />,
   "update-description": <UpdateDescriptionForm />,
   "add-new-product": <AddNewProductForm />,
-  "add-customer-product": <AddCustomerProductForm />
+  "add-customer-product": <AddCustomerProductForm />,
+  "change-password": <ChangePasswordForm />,
+  "update-user": <UpdateAccountInfoForm />,
+  "change-role": <ChangeRoleForm />,
+  "create-user": <NewAccountForm />,
 };
 
 export default function Dialog(props) {

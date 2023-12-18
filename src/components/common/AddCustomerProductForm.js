@@ -1,23 +1,18 @@
 "use client";
 import Loading from "@/app/loading";
-import { useGetPurchaseOrderByCustomerIdQuery } from "@/services/api/purchaseOrder/purchaseOrderApi";
 import { hideDialog } from "@/store/features/dialogSlice";
 import { showNotification } from "@/store/features/notificationSlice";
 import { addNewRepairProduct, addProduct } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { isAfter, differenceInDays } from "date-fns";
 import { useGetCustomerProductsByCustomerIdQuery } from "@/services/api/customerProduct/customerProductApi";
 
 export default function AddCustomerProductForm() {
   const dispatch = useDispatch();
   const dialog = useSelector((state) => state.dialog);
   const repairOrder = useSelector((state) => state.repairOrder);
-  const { currentData, isLoading, isFetching, isError, error } = useGetCustomerProductsByCustomerIdQuery(
-    repairOrder.customer.id
-  );
+  const { currentData, isLoading, isFetching, isError, error } = useGetCustomerProductsByCustomerIdQuery(repairOrder.customer.id);
   const {
     control,
     register,
@@ -61,15 +56,16 @@ export default function AddCustomerProductForm() {
 
   return (
     <form
-      className={
-        dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]
-      }
+      className={dialog.show === true ? styles["dialog__content__box"] : styles["dialog__content__box--hidden"]}
       onSubmit={handleSubmit(onSubmit)}
       noValidate
     >
       <div className={styles["dialog__content__box__control"]}>
         <label htmlFor="customer-product">Danh sách sản phẩm</label>
         <select id="customer-product" {...register("customer-product", { required: true })}>
+          <option value="" disabled hidden>
+            Chọn sản phẩm của khách hàng
+          </option>
           {currentData?.data.map((item) => {
             return (
               <option key={item.id} value={item.id}>
@@ -78,9 +74,7 @@ export default function AddCustomerProductForm() {
             );
           })}
         </select>
-        {errors["customer-product"] && (
-          <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Chưa chọn sản phẩm</span>
-        )}
+        {errors["customer-product"] && <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>Chưa chọn sản phẩm</span>}
       </div>
       <div className={styles["dialog__content__box__actions"]}>
         <button onClick={handleCloseForm} className={styles["button"]}>
@@ -92,16 +86,4 @@ export default function AddCustomerProductForm() {
       </div>
     </form>
   );
-}
-
-function removeAccents(str) {
-  return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
-function checkValidWarranty(dt) {
-  const date = new Date(dt);
-  const now = new Date();
-  const isExpired = isAfter(now, date);
-  const daysLeft = differenceInDays(date, now);
-
-  return { isExpired, daysLeft };
 }
