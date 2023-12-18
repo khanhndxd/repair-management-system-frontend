@@ -9,13 +9,14 @@ export default function ManagementLayout({ children }) {
       <aside className={styles["sidebar"]}>
         <div className={styles["sidebar__logo"]}>
           <Link href="/">
-            <h1>LOGO</h1>
+            <h1>ĐATN</h1>
           </Link>
         </div>
         <SidebarLink content={"Trang chủ"} href="/quan-ly" />
         <SidebarLink content={"Quản lý bảo hành/sửa chữa"} href="/quan-ly/bao-hanh-sua-chua" />
         <SidebarLink content={"Quản lý khách hàng"} href="/quan-ly/khach-hang" />
         <SidebarLink content={"Tiếp nhận bảo hành"} href="/quan-ly/tiep-nhan-bao-hanh" />
+        <SidebarLink content={"Quản lý tài khoản"} href="/quan-ly/tai-khoan" />
         <SidebarLink content={"Thống kê"} href="/quan-ly/thong-ke" />
         <SidebarAccount />
       </aside>
