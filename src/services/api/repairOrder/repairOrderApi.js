@@ -7,20 +7,27 @@ const repairOrderApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: "RepairOrders", id: "List" }],
     }),
     getAllRepairOrdersWithQueryString: build.query({
-      query: (query) => `/RepairOrder/GetAll?field=${query.field}&time=${query.time ? query.time : ""}`,
+      query: (query) =>
+        `/RepairOrder/GetAll?field=${query.field}&time=${query.time ? query.time : ""}&startDate=${
+          query.startDate ? query.startDate : ""
+        }&endDate=${query.endDate ? query.endDate : ""}`,
       providesTags: (result, error, id) => [{ type: "RepairOrders", id: "List" }],
     }),
     getRepairOrderById: build.query({
       query: (id) => `/RepairOrder/${id}`,
-      providesTags: (result, error, id) => [{ type: "RepairOrders", id: "Single" }],
+      providesTags: (result, error, id) => [{ type: "RepairOrders", id }],
     }),
     getRepairOrderByStatus: build.query({
       query: (id) => `/RepairOrder/Status/${id}`,
-      providesTags: (result, error, id) => [{ type: "RepairOrders", id: "Single" }],
+      providesTags: (result, error, id) => [{ type: "RepairOrders", id }],
     }),
     getTotalPrice: build.query({
       query: () => `/RepairOrder/TotalPrice`,
-      providesTags: (result, error, id) => [{ type: "RepairOrders", id: "Single" }],
+      providesTags: (result, error, id) => [{ type: "RepairOrders", id }],
+    }),
+    getRepairCategoryStats: build.query({
+      query: () => "/RepairOrder/Category",
+      providesTags: (result, error, id) => [{ type: "RepairOrders", id: "List" }],
     }),
     addRepairOrder: build.mutation({
       query: (body) => ({
@@ -35,8 +42,8 @@ const repairOrderApi = baseApi.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [
-        { type: "RepairOrders", id: "Single" },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RepairOrders", id },
         { type: "RepairOrders", id: "List" },
       ],
     }),
@@ -46,8 +53,8 @@ const repairOrderApi = baseApi.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: [
-        { type: "RepairOrders", id: "Single" },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RepairOrders", id },
         { type: "RepairOrders", id: "List" },
       ],
     }),
@@ -57,8 +64,8 @@ const repairOrderApi = baseApi.injectEndpoints({
         method: "DELETE",
         body,
       }),
-      invalidatesTags: [
-        { type: "RepairOrders", id: "Single" },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RepairOrders", id },
         { type: "RepairOrders", id: "List" },
       ],
     }),
@@ -71,8 +78,9 @@ export const {
   useGetRepairOrderByStatusQuery,
   useGetAllRepairOrdersWithQueryStringQuery,
   useGetTotalPriceQuery,
+  useGetRepairCategoryStatsQuery,
   useAddRepairOrderMutation,
   useUpdateRepairOrderStatusMutation,
   useUpdateRepairOrderMutation,
-  useDeleteRepairOrderMutation
+  useDeleteRepairOrderMutation,
 } = repairOrderApi;

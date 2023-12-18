@@ -8,8 +8,8 @@ const repairAccessoryApi = baseApi.injectEndpoints({
         method: "POST",
         body,
       }),
-      invalidatesTags: [
-        { type: "RepairOrders", id: "Single" },
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RepairOrders", id },
         { type: "RepairOrders", id: "List" },
       ],
     }),
