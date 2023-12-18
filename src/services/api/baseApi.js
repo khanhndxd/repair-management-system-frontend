@@ -30,25 +30,25 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
     });
     const status = refreshResult.status;
     const data = await refreshResult.json();
-    console.log(data)
+    console.log(data);
 
     if (status === 400) {
-      console.log("NOT VALID REFRESH TOKEN")
+      console.log("NOT VALID REFRESH TOKEN");
       api.dispatch(logOut());
-    } 
-    if(status === 200) {
-      console.log("VALID REFRESH TOKEN")
-      console.log(status)
+    }
+    if (status === 200) {
+      console.log("VALID REFRESH TOKEN");
+      console.log(status);
 
       if (data) {
-        console.log("DATA RESPONSE")
+        console.log("DATA RESPONSE");
         console.log(data);
         const user = api.getState().auth.user;
         // store the new token
         api.dispatch(setCredentials({ ...data.data, user }));
         // retry the original query with new access token
         result = await baseQuery(args, api, extraOptions);
-        console.log("COME BACK")
+        console.log("COME BACK");
       }
     }
   }
@@ -58,6 +58,6 @@ const baseQueryWithReauth = async (args, api, extraOptions) => {
 
 export const baseApi = createApi({
   baseQuery: baseQueryWithReauth,
-  tagTypes: ["Customers", "RepairOrders", "CustomerProduct"],
+  tagTypes: ["Customers", "RepairOrders", "CustomerProduct", "RepairLogs", "Users"],
   endpoints: () => ({}),
 });
