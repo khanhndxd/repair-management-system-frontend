@@ -1,47 +1,41 @@
 "use client";
 import Loading from "@/app/loading";
 import RepairOrderForm from "@/components/pages/quan-ly/tiep-nhan-bao-hanh/RepairOrderForm";
+import { baseApi } from "@/services/api/baseApi";
 import { useAddRepairCustomerProductMutation } from "@/services/api/repairCustomerProduct/repairCustomerProductApi";
-import {
-  useGetRepairOrderByIdQuery,
-  useUpdateRepairOrderMutation,
-} from "@/services/api/repairOrder/repairOrderApi";
+import { useAddRepairLogMutation } from "@/services/api/repairLog/repairLogApi";
+import { useGetRepairOrderByIdQuery, useUpdateRepairOrderMutation } from "@/services/api/repairOrder/repairOrderApi";
 import { useAddRepairProductMutation } from "@/services/api/repairProduct/repairProductApi";
 import { useAddRepairTaskMutation } from "@/services/api/repairTask/repairTaskApi";
 import { convertFromVND } from "@/services/helper/helper";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { showNotification } from "@/store/features/notificationSlice";
-import {
-  addCustomer,
-  addNewRepairProduct,
-  addProduct,
-  addRepairType,
-  addTask,
-  reset,
-} from "@/store/features/repairOrderSlice";
+import { addCustomer, addNewRepairProduct, addProduct, addRepairType, addTask, reset } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
 import { format } from "date-fns";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function EditRepairOrderPage() {
+  const router = useRouter();
   const params = useParams();
   const dispatch = useDispatch();
   const repairOrder = useSelector((state) => state.repairOrder);
+  const auth = useSelector((state) => state.auth);
+  const { data, isLoading, isFetching, isError, error } = useGetRepairOrderByIdQuery(params.id);
   const [updateRepairOrder, { loading }] = useUpdateRepairOrderMutation();
   const [addRepairProduct, { loading: productLoading }] = useAddRepairProductMutation();
   const [addRepairTask, { loading: taskLoading }] = useAddRepairTaskMutation();
-  const { data, isLoading, isFetching, isError, error } = useGetRepairOrderByIdQuery(params.id);
-  const [addRepairCustomerProduct, { loading: repairCustomerProductLoading }] =
-    useAddRepairCustomerProductMutation();
+  const [addRepairCustomerProduct, { loading: repairCustomerProductLoading }] = useAddRepairCustomerProductMutation();
+  const [addRepairLog, { loading: logLoading }] = useAddRepairLogMutation();
 
   useEffect(() => {
     if (isLoading === false && isFetching === false) {
       if (data) {
         dispatch(reset());
         dispatch(addCustomer(data.data.customer));
-        dispatch(addRepairType({ object: { id: data.data.repairType.id } }));
+        dispatch(addRepairType({ object: data.data.repairType }));
         for (let i = 0; i < data.data.repairProducts.length; i++) {
           dispatch(
             addProduct({
@@ -75,23 +69,6 @@ export default function EditRepairOrderPage() {
 
   const handleEditRepairOrder = async (data) => {
     try {
-      dispatch(showLoading({ content: "Đang cập nhật thông tin đơn bảo hành..." }));
-      let repairOrderPayload = {
-        Id: +params.id,
-        CustomerId: +data.customer.id,
-        CreatedById: data.creator.toString(),
-        RepairedById: data.receiver.toString(),
-        CreatedAt: data.createdDate,
-        ReceiveAt: data.receiveDate,
-        ReceiveType: data.receiveType,
-        TotalPrice: convertFromVND(repairOrder.total),
-        RepairTypeId: +data.repairType,
-        RepairReasonId: +data.repairReason,
-        Note: data.note,
-      };
-      const repairOrderResult = await updateRepairOrder(repairOrderPayload);
-      // console.log(repairOrderResult);
-
       dispatch(showLoading({ content: "Đang cập nhật sản phẩm bảo hành..." }));
 
       let repairProductsPayload = {};
@@ -102,8 +79,7 @@ export default function EditRepairOrderPage() {
           return { RepairOrderId: params.id, purchasedProductId: item.id, Description: item.description };
         });
       }
-      const repairProductResult = await addRepairProduct(repairProductsPayload);
-      // console.log(repairProductResult);
+      await addRepairProduct(repairProductsPayload);
 
       dispatch(showLoading({ content: "Đang cập nhật công việc bảo hành..." }));
 
@@ -115,8 +91,7 @@ export default function EditRepairOrderPage() {
           return { RepairOrderId: params.id, TaskId: item.id, Description: item.description };
         });
       }
-      const repairTaskResult = await addRepairTask(repairTasksPayload);
-      // console.log(repairTaskResult);
+      await addRepairTask(repairTasksPayload);
 
       // Cập nhật sản phẩm mới vào bảng RepairCustomerOrder
       let repairCustomerProductPayload = {};
@@ -131,13 +106,39 @@ export default function EditRepairOrderPage() {
           };
         });
       }
-      const repairCustomerProductResult = await addRepairCustomerProduct(repairCustomerProductPayload);
+      await addRepairCustomerProduct(repairCustomerProductPayload);
+
+      dispatch(showLoading({ content: "Đang cập nhật thông tin đơn bảo hành..." }));
+      let repairOrderPayload = {
+        Id: +params.id,
+        CustomerId: +data.customer.id,
+        CreatedById: data.creator.toString(),
+        RepairedById: data.receiver.toString(),
+        ReceivedById: data.technician.toString(),
+        CreatedAt: data.createdDate,
+        ReceiveAt: data.receiveDate,
+        ReceiveType: data.receiveType,
+        TotalPrice: convertFromVND(repairOrder.total),
+        RepairTypeId: +data.repairType,
+        RepairReasonId: +data.repairReason,
+        Note: data.note,
+      };
+      await updateRepairOrder(repairOrderPayload, {id: params.id});
+
+      let logPayload = {
+        RepairOrderId: +params.id,
+        CreatedById: auth.userId,
+        CreatedAt: new Date(),
+        Info: "Chỉnh sửa thông tin đơn",
+      };
+      await addRepairLog(logPayload, { id: params.id });
     } catch (err) {
       console.log(err);
     }
 
     dispatch(hideLoading());
     dispatch(showNotification({ message: "Chỉnh sửa đơn bảo hành thành công", type: "success" }));
+    router.push(`/quan-ly/chi-tiet-don/${params.id}`);
   };
 
   if (isError) return <div>Có lỗi xảy ra!</div>;
@@ -153,6 +154,7 @@ export default function EditRepairOrderPage() {
           customer: data.data.customer,
           creator: data.data.createdBy.id,
           receiver: data.data.repairedBy.id,
+          technician: data.data.receivedBy.id,
           createdDate: format(new Date(data.data.createdAt), "yyyy-MM-dd"),
           receiveDate: format(new Date(data.data.receiveAt), "yyyy-MM-dd"),
           receiveType: data.data.receiveType,
