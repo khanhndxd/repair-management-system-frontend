@@ -12,6 +12,8 @@ import ChangePasswordForm from "../pages/quan-ly/tai-khoan/ChangePasswordForm";
 import UpdateAccountInfoForm from "../pages/quan-ly/tai-khoan/UpdateAccountInfoForm";
 import ChangeRoleForm from "../pages/quan-ly/tai-khoan/ChangeRoleForm";
 import NewAccountForm from "../pages/quan-ly/tai-khoan/NewAccountForm";
+import AddRepairReasonForm from "../pages/quan-ly/ly-do-bao-hanh/AddRepairReasonForm";
+import UpdateRepairReasonForm from "../pages/quan-ly/ly-do-bao-hanh/UpdateRepairReasonForm";
 
 const content = {
   "add-customer": <NewCustomerForm />,
@@ -25,6 +27,8 @@ const content = {
   "update-user": <UpdateAccountInfoForm />,
   "change-role": <ChangeRoleForm />,
   "create-user": <NewAccountForm />,
+  "add-repair-reason": <AddRepairReasonForm />,
+  "update-repair-reason": <UpdateRepairReasonForm />
 };
 
 export default function Dialog(props) {

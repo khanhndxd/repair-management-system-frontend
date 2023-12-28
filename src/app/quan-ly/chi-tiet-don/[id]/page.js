@@ -6,24 +6,26 @@ import RepairActions from "@/components/pages/quan-ly/chi-tiet-don/RepairActions
 import RepairOrderDetailInfo from "@/components/pages/quan-ly/chi-tiet-don/RepairOrderDetailInfo";
 import RepairOrderHistory from "@/components/pages/quan-ly/chi-tiet-don/RepairOrderHistory";
 import { useGetRepairOrderByIdQuery } from "@/services/api/repairOrder/repairOrderApi";
+import { roles } from "@/services/helper/helper";
 import styles from "@/styles/main.module.scss";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
 
 export default function RepairOrderDetail() {
   const router = useRouter();
   const params = useParams();
-  
   const { data, isLoading, isFetching, isError, error } = useGetRepairOrderByIdQuery(params.id);
-  
+  const auth = useSelector((state) => state.auth);
+
   if (isError) return <div>Có lỗi xảy ra</div>;
 
   if (isLoading || isFetching) return <Loading />;
-  
+
   const handleBack = () => {
     router.back();
   };
-  
+
   return (
     <div className={styles["dashboard__orderdetail"]}>
       <div className={styles["dashboard__orderdetail__header"]}>
@@ -32,7 +34,7 @@ export default function RepairOrderDetail() {
       </div>
       <div className={styles["dashboard__orderdetail__actions"]}>
         <h2>{params.id} - Phiếu tiếp nhận bảo hành</h2>
-        <Link href={`/quan-ly/chi-tiet-don/chinh-sua/${params.id}`}>Chỉnh sửa</Link>
+        {auth.role === roles.technician ? null : <Link href={`/quan-ly/chi-tiet-don/chinh-sua/${params.id}`}>Chỉnh sửa</Link>}
         <RepairActions
           customer={data.data.customer}
           createdAt={data.data.createdAt}
@@ -47,6 +49,7 @@ export default function RepairOrderDetail() {
           repairProducts={data.data.repairProducts}
           repairTasks={data.data.repairTasks}
           repairCustomerProducts={data.data.repairCustomerProducts}
+          repairType={data.data.repairType}
           totalPrice={data.data.totalPrice}
         />
       </div>
@@ -63,6 +66,7 @@ export default function RepairOrderDetail() {
             repairProduct={data.data.repairProducts}
             repairTasks={data.data.repairTasks}
             repairCustomerProducts={data.data.repairCustomerProducts}
+            repairAccessories={data.data.repairAccessories}
             total={data.data.totalPrice}
           />
         </div>

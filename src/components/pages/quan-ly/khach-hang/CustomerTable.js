@@ -6,6 +6,8 @@ import { useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { useGetAllCustomersQuery } from "@/services/api/customer/customerApi";
 import Loading from "@/app/loading";
+import Image from "next/image";
+import SearchIcon from "@/styles/icons/search.svg";
 
 export default function CustomerTable() {
   const { data, isLoading, isFetching, isError } = useGetAllCustomersQuery();
@@ -41,8 +43,8 @@ export default function CustomerTable() {
           Header: "Thao tác",
           Cell: ({ row }) => {
             return (
-              <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]} style={{ fontWeight: "bold" }}>
-                Xem chi tiết
+              <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button--hover-on"]} style={{ fontWeight: "bold" }}>
+                <Image priority src={SearchIcon} width={20} height={20} alt="detail" />
               </button>
             );
           },

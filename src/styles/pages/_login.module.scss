@@ -7,10 +7,19 @@
     justify-content: center;
     margin: 0px 128px;
     position: relative;
-    & > h1 {
+    &__logo {
         position: absolute;
-        top:0;
+        top:30px;
         left:0;
+        @include abstracts.display-flex-row;
+        align-items: flex-end;
+        gap: 5px;
+        & > span {
+            font-size: 30px;
+            font-weight: bold;
+            padding:0;
+            margin:0;
+        }
     }
     .box-login {
         @include abstracts.display-flex-column;

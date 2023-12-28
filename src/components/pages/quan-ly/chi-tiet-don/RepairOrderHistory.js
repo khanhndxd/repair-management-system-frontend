@@ -9,6 +9,8 @@ import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { startSignalRConnection, stopSignalRConnection } from "@/services/signalr/signalrActions";
 import { format } from "date-fns";
+import Image from "next/image";
+import SendIcon from "@/styles/icons/send.svg";
 
 export default function RepairOrderHistory({ repairOrderId }) {
   const { data, isLoading, isFetching, isError } = useGetRepairLogByRepairOrderIdQuery(repairOrderId);
@@ -22,11 +24,7 @@ export default function RepairOrderHistory({ repairOrderId }) {
   useEffect(() => {
     const handleReceiveNotification = (notificationData) => {
       const { id } = notificationData;
-      dispatch(
-        baseApi.util.invalidateTags([
-          { type: "RepairLogs", id },
-        ])
-      );
+      dispatch(baseApi.util.invalidateTags([{ type: "RepairLogs", id }]));
     };
 
     dispatch(
@@ -100,8 +98,8 @@ export default function RepairOrderHistory({ repairOrderId }) {
       </div>
       <div className={styles["dashboard__orderdetail__content__history__create"]}>
         <textarea ref={messageRef} rows="5" placeholder="Nhập lời nhắn..." />
-        <button className={styles["no-effect-button"]} onClick={handleSendMessage}>
-          &#10148;
+        <button className={styles["no-effect-button--hover-on"]} onClick={handleSendMessage}>
+          <Image priority src={SendIcon} width={30} height={30} alt="send-message" />
         </button>
       </div>
     </>

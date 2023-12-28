@@ -1,6 +1,5 @@
 "use client";
 import Loading from "@/app/loading";
-import { useDeleteUserMutation, useGetAllUserQuery } from "@/services/api/user/userApi";
 import { roles } from "@/services/helper/helper";
 import { showDialog } from "@/store/features/dialogSlice";
 import { hideLoading } from "@/store/features/loadingAsyncSlice";
@@ -12,13 +11,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { useFilters, usePagination, useSortBy, useTable } from "react-table";
 import DeleteIcon from "@/styles/icons/trash-2.svg";
 import LockIcon from "@/styles/icons/lock.svg";
-import InfoIcon from "@/styles/icons/info.svg";
-import UsersIcon from "@/styles/icons/users.svg";
 import DeleteConfirm from "@/components/common/DeleteConfirm";
+import { useDeleteRepairReasonMutation, useGetAllRepairReasonQuery } from "@/services/api/repairReason/repairReasonApi";
+import EditIcon from "@/styles/icons/edit.svg";
 
-export default function AccountTable() {
-  const { data, isLoading, isFetching, isError } = useGetAllUserQuery();
-  const [deleteUser, { loading }] = useDeleteUserMutation();
+export default function RepairReasonTable() {
+  const { data, isLoading, isFetching, isError } = useGetAllRepairReasonQuery();
+  const [deleteRepairReason, { loading }] = useDeleteRepairReasonMutation();
   const [deletedId, setDeletedId] = useState(null);
   const [openDeleteConfirm, setOpenDeleteConfirm] = useState(false);
   const auth = useSelector((state) => state.auth);
@@ -27,7 +26,7 @@ export default function AccountTable() {
   const tableData = useMemo(() => {
     if (isLoading === false && isFetching === false) {
       let newData = data.data.map((item) => {
-        return { id: item.id, name: item.userName, email: item.email, phone: item.phoneNumber, role: item.roles[0] };
+        return { id: item.id, name: item.reason };
       });
       if (!newData) return [];
       return newData;
@@ -38,63 +37,26 @@ export default function AccountTable() {
   const columns = useMemo(() => {
     return [
       { Header: "Mã", accessor: "id", Filter: ColumnFilter },
-      { Header: "Tên", accessor: "name", Filter: ColumnFilter },
-      { Header: "Email", accessor: "email", Filter: ColumnFilter },
-      { Header: "Số điện thoại", accessor: "phone", Filter: ColumnFilter },
-      {
-        Header: "Vai trò",
-        accessor: "role",
-        Cell: ({ value }) => {
-          if (value === "Creator") {
-            return <span>Nhân viên tạo phiếu</span>;
-          } else if (value === "Receiver") {
-            return <span>Nhân viên tiếp nhận</span>;
-          } else if (value === "Technician") {
-            return <span>Kỹ thuật viên</span>;
-          } else if (value === "Admin") {
-            return <span>Quản lý</span>;
-          } else {
-            return <span></span>;
-          }
-        },
-        Filter: ColumnFilter,
-      },
+      { Header: "Lý do", accessor: "name", Filter: ColumnFilter },
     ];
   }, [isLoading, isFetching]);
 
-  const handleChangeRole = (data) => {
+  const handleUpdateRepairReason = (data) => {
     dispatch(
       showDialog({
-        title: `Thay đổi vai trò của người dùng ${data.values.name} (mã ${data.values.id})`,
-        content: "change-role",
-        info: { ...data.values },
+        title: `Cập nhật lý do bảo hành ${data.values.name} (mã ${data.values.id})`,
+        content: "update-repair-reason",
+        info: { id: data.values.id, reason: data.values.name },
       })
     );
   };
-  const handleUpdateUser = (data) => {
-    dispatch(
-      showDialog({
-        title: `Chỉnh sửa thông tin của người dùng ${data.values.name} (mã ${data.values.id})`,
-        content: "update-user",
-        info: { ...data.values },
-      })
-    );
-  };
-  const handleChangePassword = (data) => {
-    dispatch(
-      showDialog({
-        title: `Thay đổi mật khẩu cho người dùng ${data.values.name} (mã ${data.values.id})`,
-        content: "change-password",
-        info: { id: data.values.id },
-      })
-    );
-  };
-  const handleDeleteUser = async (id) => {
+  const handleDeleteRepairReason = async (id) => {
     try {
-      await deleteUser(id).unwrap();
+      await deleteRepairReason({ Id: id }).unwrap();
 
       dispatch(hideLoading());
-      dispatch(showNotification({ message: "Xóa người dùng thành công", type: "success" }));
+      dispatch(showNotification({ message: "Xóa lý do bảo hành thành công", type: "success" }));
+      setOpenDeleteConfirm(false);
     } catch (err) {
       dispatch(showNotification({ message: err.data.message, type: "error" }));
       dispatch(hideLoading());
@@ -115,32 +77,12 @@ export default function AccountTable() {
                   <>
                     <button
                       onClick={() => {
-                        handleChangeRole(row);
+                        handleUpdateRepairReason(row);
                       }}
                       className={styles["no-effect-button--hover-on"]}
                       style={{ fontWeight: "bold" }}
                     >
-                      <Image priority src={UsersIcon} width={20} height={20} alt="role" />
-                    </button>
-                    &nbsp;|&nbsp;
-                    <button
-                      onClick={() => {
-                        handleUpdateUser(row);
-                      }}
-                      className={styles["no-effect-button--hover-on"]}
-                      style={{ fontWeight: "bold" }}
-                    >
-                      <Image priority src={InfoIcon} width={20} height={20} alt="info" />
-                    </button>
-                    &nbsp;|&nbsp;
-                    <button
-                      onClick={() => {
-                        handleChangePassword(row);
-                      }}
-                      className={styles["no-effect-button--hover-on"]}
-                      style={{ fontWeight: "bold" }}
-                    >
-                      <Image priority src={LockIcon} width={20} height={20} alt="password" />
+                      <Image priority src={EditIcon} width={20} height={20} alt="edit" />
                     </button>
                     &nbsp;|&nbsp;
                     <button
@@ -194,7 +136,7 @@ export default function AccountTable() {
 
   return (
     <>
-      <div className={styles["dashboard__account__table-container"]}>
+      <div className={styles["dashboard__repair-reason__table-container"]}>
         <table {...getTableProps()}>
           <thead>
             {headerGroups.map((headerGroup) => {
@@ -267,8 +209,8 @@ export default function AccountTable() {
         <DeleteConfirm
           id={deletedId}
           title={`Xác nhận xóa`}
-          content={`Xóa người dùng có mã '${deletedId}'?`}
-          handleDelete={handleDeleteUser}
+          content={`Xóa lý do bảo hành có mã '${deletedId}'?`}
+          handleDelete={handleDeleteRepairReason}
           handleOpen={setOpenDeleteConfirm}
         />
       )}

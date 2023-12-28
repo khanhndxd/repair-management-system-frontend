@@ -5,9 +5,11 @@ import { useGetCustomerByIdQuery } from "@/services/api/customer/customerApi";
 import { showDialog } from "@/store/features/dialogSlice";
 import { addCustomer, isOrderFromCustomerPage, reset } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
+import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import UserIcon from "@/styles/icons/user.svg";
 
 const activities = [
   { value: "", label: "Giao dịch" },
@@ -58,9 +60,7 @@ export default function CustomerDetail() {
         <h1>Chi tiết khách hàng</h1>
       </div>
       <div className={styles["dashboard__customerdetail__basic"]}>
-        {/* <div className={styles["dashboard__customerdetail__basic__image"]}>
-          <span>&#9786;</span>
-        </div> */}
+        <Image priority src={UserIcon} width={40} height={40} alt="user" />
         <h2>{data.data.name}</h2>
         <p style={{ cursor: "pointer" }} onClick={handleUpdateCustomer}>
           Chỉnh sửa

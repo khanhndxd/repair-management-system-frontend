@@ -43,8 +43,8 @@ export default function NewRepairOrder() {
       let payload = {
         CustomerId: +data.customer.id,
         CreatedById: data.creator,
-        RepairedById: data.receiver,
-        ReceivedById: data.technician,
+        RepairedById: data.technician,
+        ReceivedById: data.receiver,
         CreatedAt: data.createdDate,
         ReceiveAt: data.receiveDate,
         ReceiveType: data.receiveType,

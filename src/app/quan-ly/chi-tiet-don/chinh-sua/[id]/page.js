@@ -10,7 +10,15 @@ import { useAddRepairTaskMutation } from "@/services/api/repairTask/repairTaskAp
 import { convertFromVND } from "@/services/helper/helper";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { showNotification } from "@/store/features/notificationSlice";
-import { addCustomer, addNewRepairProduct, addProduct, addRepairType, addTask, reset } from "@/store/features/repairOrderSlice";
+import {
+  addCustomer,
+  addNewRepairProduct,
+  addProduct,
+  addRepairType,
+  addTask,
+  addTotalPrice,
+  reset,
+} from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
 import { format } from "date-fns";
 import { useParams, useRouter } from "next/navigation";
@@ -34,6 +42,7 @@ export default function EditRepairOrderPage() {
     if (isLoading === false && isFetching === false) {
       if (data) {
         dispatch(reset());
+        dispatch(addTotalPrice(data.data.totalPrice));
         dispatch(addCustomer(data.data.customer));
         dispatch(addRepairType({ object: data.data.repairType }));
         for (let i = 0; i < data.data.repairProducts.length; i++) {
@@ -113,8 +122,8 @@ export default function EditRepairOrderPage() {
         Id: +params.id,
         CustomerId: +data.customer.id,
         CreatedById: data.creator.toString(),
-        RepairedById: data.receiver.toString(),
-        ReceivedById: data.technician.toString(),
+        RepairedById: data.technician.toString(),
+        ReceivedById: data.receiver.toString(),
         CreatedAt: data.createdDate,
         ReceiveAt: data.receiveDate,
         ReceiveType: data.receiveType,
@@ -123,7 +132,7 @@ export default function EditRepairOrderPage() {
         RepairReasonId: +data.repairReason,
         Note: data.note,
       };
-      await updateRepairOrder(repairOrderPayload, {id: params.id});
+      await updateRepairOrder(repairOrderPayload, { id: params.id });
 
       let logPayload = {
         RepairOrderId: +params.id,
@@ -153,8 +162,8 @@ export default function EditRepairOrderPage() {
         initialValues={{
           customer: data.data.customer,
           creator: data.data.createdBy.id,
-          receiver: data.data.repairedBy.id,
-          technician: data.data.receivedBy.id,
+          receiver: data.data.receivedBy.id,
+          technician: data.data.repairedBy.id,
           createdDate: format(new Date(data.data.createdAt), "yyyy-MM-dd"),
           receiveDate: format(new Date(data.data.receiveAt), "yyyy-MM-dd"),
           receiveType: data.data.receiveType,

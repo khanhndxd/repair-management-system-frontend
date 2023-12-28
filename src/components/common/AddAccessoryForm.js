@@ -13,6 +13,8 @@ import { useParams } from "next/navigation";
 import { useAddRepairAccessoryMutation } from "@/services/api/repairAccessory/repairAccessoryApi";
 import { hideLoading, showLoading } from "@/store/features/loadingAsyncSlice";
 import { useAddRepairLogMutation } from "@/services/api/repairLog/repairLogApi";
+import { useUpdateTotalPriceMutation } from "@/services/api/repairOrder/repairOrderApi";
+import { useGetWarrantyPolicyTasksByPolicyIdQuery } from "@/services/api/warrantyPolicyTask/warrantyPolicyTaskApi";
 
 function removeAccents(str) {
   return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -20,10 +22,21 @@ function removeAccents(str) {
 
 export default function AddAccessoryForm() {
   const { data, isLoading, isFetching, isError } = useGetAllAccessoryQuery();
+  const dialog = useSelector((state) => state.dialog);
+  const {
+    data: policyTasks,
+    isLoading: ptLoading,
+    isfetching: ptFetching,
+    isError: ptError,
+  } = useGetWarrantyPolicyTasksByPolicyIdQuery(
+    dialog.info.repairProducts[0]?.purchasedProduct?.category?.warrantyPolicy?.id
+      ? dialog.info.repairProducts[0]?.purchasedProduct?.category?.warrantyPolicy?.id
+      : -1
+  );
   const [addRepairAccessory, { isLoading: repairAccessoryLoading }] = useAddRepairAccessoryMutation();
   const [addRepairLog, { loading }] = useAddRepairLogMutation();
+  const [updateTotalPrice, { loading: totalPriceLoading }] = useUpdateTotalPriceMutation();
   const params = useParams();
-  const dialog = useSelector((state) => state.dialog);
   const accessory = useSelector((state) => state.accessoryCart);
   const auth = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -40,24 +53,61 @@ export default function AddAccessoryForm() {
   const onSubmit = async (data) => {
     dispatch(showLoading({ content: "Đang cập nhật linh kiện..." }));
     try {
+      let taskCheck = false;
+      let totalPrice = 0;
+      let accessoryTotalPrice = 0;
+
+      for (let i = 0; i < accessory.accessories.length; i++) {
+        accessoryTotalPrice += accessory.accessories[i].price * accessory.accessories[i].quantity;
+      }
+
       let repairAccessoryPayload = {};
+      let totalPricePayload = {};
+
       if (accessory.accessories.length === 0) {
+        totalPricePayload = { Id: +params.id, TotalPrice: totalPrice };
         repairAccessoryPayload = [{ repairOrderId: +params.id, accessoryId: -1 }];
       } else {
+        if (dialog.info.repairType.name.localeCompare("Bảo hành", "vi", { sensitivity: "base" }) !== 0) {
+          for (let i = 0; i < dialog.info.repairTasks.length; i++) {
+            totalPrice += dialog.info.repairTasks[i].task.price;
+          }
+          totalPrice += accessoryTotalPrice;
+        } else {
+          for (let i = 0; i < policyTasks.data.length; i++) {
+            if (policyTasks.data[i].task.name.localeCompare("Đổi mới", "vi", { sensitivity: "base" }) === 0) {
+              taskCheck = true;
+            }
+          }
+          if (taskCheck === false) {
+            totalPrice += accessoryTotalPrice;
+          }
+        }
+        totalPricePayload = { Id: +params.id, TotalPrice: totalPrice };
         repairAccessoryPayload = prepareRepairAccessoryData(params.id, accessory.accessories);
       }
+
+      // if (dialog.info.repairType.name.localeCompare("Bảo hành", "vi", { sensitivity: "base" }) !== 0) {
+      //   await updateTotalPrice(totalPricePayload, { id: params.id });
+      // } else {
+      //   if (taskCheck === false) {
+      //     totalPricePayload = { Id: +params.id, TotalPrice: totalPrice };
+      //   }
+      // }
+      await updateTotalPrice(totalPricePayload, { id: params.id });
+
       await addRepairAccessory(repairAccessoryPayload, { id: params.id });
-      let logPayload = {
-        RepairOrderId: +params.id,
-        CreatedById: auth.userId,
-        CreatedAt: new Date(),
-        Info: "Cập nhật linh kiện",
-      };
 
-      await addRepairLog(logPayload, { id: +params.id });
+      // let logPayload = {
+      //   RepairOrderId: +params.id,
+      //   CreatedById: auth.userId,
+      //   CreatedAt: new Date(),
+      //   Info: "Cập nhật linh kiện",
+      // };
 
+      // await addRepairLog(logPayload, { id: params.id });
     } catch (err) {
-      console.log(err)
+      console.log(err);
     }
     dispatch(hideLoading());
     dispatch(showNotification({ message: "Cập nhật linh kiện thành công", type: "success" }));
@@ -76,9 +126,9 @@ export default function AddAccessoryForm() {
     setSuggestions(newSuggestions);
   };
 
-  if (isError) return <div>Có lỗi xảy ra!</div>;
+  if (isError || ptError) return <div>Có lỗi xảy ra!</div>;
 
-  if (isLoading) return <Loading />;
+  if (isLoading || isFetching || ptLoading || ptFetching) return <Loading />;
 
   return (
     <form

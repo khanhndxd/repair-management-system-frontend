@@ -27,6 +27,7 @@ export default function RepairActions(props) {
     repairTasks,
     repairCustomerProducts,
     repairReason,
+    repairType,
     totalPrice,
   } = props;
   const { data, isLoading, isFetching, isError } = useGetAllStatusesQuery();
@@ -49,13 +50,16 @@ export default function RepairActions(props) {
     dispatch(showLoading({ content: "Đang cập nhật trạng thái đơn..." }));
     try {
       const label = getStatusLabelByValue(+e.target.value);
-      await updateRepairOrderStatus({
-        id: repairOrderId,
-        createdById: createdBy.toString(),
-        repairedById: repairedBy.toString(),
-        receivedById: receivedBy.toString(),
-        statusId: +e.target.value,
-      }, { id: repairOrderId });
+      await updateRepairOrderStatus(
+        {
+          id: repairOrderId,
+          createdById: createdBy.toString(),
+          repairedById: repairedBy.toString(),
+          receivedById: receivedBy.toString(),
+          statusId: +e.target.value,
+        },
+        { id: repairOrderId }
+      );
 
       const logPayload = {
         RepairOrderId: repairOrderId,
@@ -79,13 +83,16 @@ export default function RepairActions(props) {
   const handleAcceptOrder = async () => {
     dispatch(showLoading({ content: "Đang cập nhật trạng thái đơn..." }));
     try {
-      await updateRepairOrderStatus({
-        id: repairOrderId,
-        createdById: createdBy.toString(),
-        repairedById: repairedBy.toString(),
-        receivedById: receivedBy.toString(),
-        statusId: 2,
-      }, { id: repairOrderId });
+      await updateRepairOrderStatus(
+        {
+          id: repairOrderId,
+          createdById: createdBy.toString(),
+          repairedById: repairedBy.toString(),
+          receivedById: receivedBy.toString(),
+          statusId: 2,
+        },
+        { id: repairOrderId }
+      );
 
       const logPayload = {
         RepairOrderId: repairOrderId,
@@ -102,9 +109,15 @@ export default function RepairActions(props) {
   };
 
   const handleAddAccessory = () => {
-    dispatch(reset())
+    dispatch(reset());
     dispatch(addChosenAccessory({ info: repairAccessories }));
-    dispatch(showDialog({ title: "Thêm/chỉnh sửa thông tin linh kiện", content: "add-accessory" }));
+    dispatch(
+      showDialog({
+        title: "Thêm/chỉnh sửa thông tin linh kiện",
+        content: "add-accessory",
+        info: { totalPrice: totalPrice, repairTasks: repairTasks, repairType: repairType, repairProducts: repairProducts },
+      })
+    );
   };
 
   const handleCreatePdf = async () => {

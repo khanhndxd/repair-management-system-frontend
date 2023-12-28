@@ -1,5 +1,5 @@
 import { addDays, format, parseISO, startOfWeek, endOfWeek, getDaysInMonth, isWithinInterval } from "date-fns";
-import viLocale from 'date-fns/locale/vi';
+import viLocale from "date-fns/locale/vi";
 
 const repairTypes = ["Bảo hành", "Sửa chữa", "Đổi mới"];
 const repairTasks = ["Vệ sinh máy tính", "Cài đặt phần mềm", "Sửa chữa phần mềm", "Thay thế linh kiện", "Đổi mới"];
@@ -38,7 +38,9 @@ export const getStatusLabelByValue = (value) => {
 
 export const roles = {
   admin: "Admin",
-  staff: "Staff",
+  creator: "Creator",
+  receiver: "Receiver",
+  technician: "Technician",
 };
 
 export function convertToVND(price) {

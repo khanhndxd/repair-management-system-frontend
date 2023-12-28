@@ -53,4 +53,10 @@
     cursor: pointer;
     border:none;
     background-color: transparent;
+    &--hover-on {
+        @extend .no-effect-button;
+        &:hover {
+            transform:scale(1.2);
+        }
+    }
 }

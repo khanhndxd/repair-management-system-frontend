@@ -4,6 +4,8 @@ import styles from "@/styles/main.module.scss";
 import { useTable, useGlobalFilter, useSortBy, useFilters, usePagination } from "react-table";
 import { useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import SearchIcon from "@/styles/icons/search.svg";
 
 const statuses = {
   1: { content: "Chờ xử lý", color: "#3D7EC5" },
@@ -71,11 +73,11 @@ export default function CustomerOrderTable(props) {
             return (
               <div
                 style={{
-                  padding: "5px"
+                  padding: "5px",
                 }}
               >
-                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button"]}>
-                  Xem chi tiết
+                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button--hover-on"]}>
+                  <Image priority src={SearchIcon} width={20} height={20} alt="detail" />
                 </button>
               </div>
             );
@@ -121,7 +123,7 @@ export default function CustomerOrderTable(props) {
   );
 
   return (
-    <>
+    <div className={styles["table"]}>
       <table {...getTableProps()}>
         <thead>
           {headerGroups.map((headerGroup) => {
@@ -189,7 +191,7 @@ export default function CustomerOrderTable(props) {
           ))}
         </select>
       </div>
-    </>
+    </div>
   );
 }
 

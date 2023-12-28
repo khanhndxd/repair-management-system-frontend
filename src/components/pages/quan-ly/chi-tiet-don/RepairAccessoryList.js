@@ -5,10 +5,18 @@ import { useMemo } from "react";
 
 export default function RepairAccessoryList(props) {
   const { repairAccessories } = props;
+
   const data = useMemo(() => {
-    let processedData = preprocessingRepairAccessoryData(repairAccessories);
+    let processedData = repairAccessories.map((item) => {
+      return {
+        id: item.accessory.id,
+        name: item.accessory.name,
+        unit: item.accessory.unit,
+        quantity: item.quantity,
+      };
+    });
     return processedData;
-  }, []);
+  }, [repairAccessories]);
 
   const columns = useMemo(() => {
     return [
@@ -17,14 +25,12 @@ export default function RepairAccessoryList(props) {
       { Header: "Đơn vị", accessor: "unit" },
       { Header: "Số lượng", accessor: "quantity" },
     ];
-  }, []);
+  }, [repairAccessories]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable(
-    {
-      columns,
-      data,
-    }
-  );
+  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = useTable({
+    columns,
+    data,
+  });
 
   return (
     <div className={styles["dashboard__neworder__content__product__table-container"]}>
@@ -70,15 +76,3 @@ export default function RepairAccessoryList(props) {
     </div>
   );
 }
-
-const preprocessingRepairAccessoryData = (data) => {
-  let result = data.map((item) => {
-    return {
-      id: item.accessory.id,
-      name: item.accessory.name,
-      unit: item.accessory.unit,
-      quantity: item.quantity,
-    };
-  });
-  return result;
-};

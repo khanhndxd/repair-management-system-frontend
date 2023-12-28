@@ -44,7 +44,7 @@ export default function RepairOrderForm(props) {
           <h3>&#10114; Thông tin bảo hành</h3>
           <RepairList watch={watch} resetField={resetField} />
           <p style={{ marginLeft: "auto" }}>
-            Tổng chi phí: <strong style={{ fontSize: "24px" }}>{repairOrder?.total}</strong>
+            Tổng chi phí: <strong style={{ fontSize: "24px" }}>{repairOrder?.total}</strong> (Tạm tính)
           </p>
         </div>
         <div className={styles["dashboard__neworder__content__info"]}>

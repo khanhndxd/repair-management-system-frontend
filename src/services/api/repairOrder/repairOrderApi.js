@@ -19,7 +19,10 @@ const repairOrderApi = baseApi.injectEndpoints({
     }),
     getRepairOrderByStatus: build.query({
       query: (id) => `/RepairOrder/Status/${id}`,
-      providesTags: (result, error, id) => [{ type: "RepairOrders", id }],
+      providesTags: (result, error, id) => [
+        { type: "RepairOrders", id },
+        { type: "RepairOrders", id: "List" },
+      ],
     }),
     getTotalPrice: build.query({
       query: () => `/RepairOrder/TotalPrice`,
@@ -58,6 +61,17 @@ const repairOrderApi = baseApi.injectEndpoints({
         { type: "RepairOrders", id: "List" },
       ],
     }),
+    updateTotalPrice: build.mutation({
+      query: (body) => ({
+        url: "/RepairOrder/TotalPrice",
+        method: "PATCH",
+        body,
+      }),
+      invalidatesTags: (result, error, { id }) => [
+        { type: "RepairOrders", id },
+        { type: "RepairOrders", id: "List" },
+      ],
+    }),
     deleteRepairOrder: build.mutation({
       query: (body) => ({
         url: "/RepairOrder",
@@ -82,5 +96,6 @@ export const {
   useAddRepairOrderMutation,
   useUpdateRepairOrderStatusMutation,
   useUpdateRepairOrderMutation,
+  useUpdateTotalPriceMutation,
   useDeleteRepairOrderMutation,
 } = repairOrderApi;

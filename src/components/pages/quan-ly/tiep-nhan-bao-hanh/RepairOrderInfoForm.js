@@ -2,21 +2,21 @@
 import Loading from "@/app/loading";
 import MultipleSelect from "@/components/common/MultipleSelect";
 import { useGetRepairDataQuery } from "@/services/api/repairData/repairDataApi";
-import { convertToVND } from "@/services/helper/helper";
+import { useGetAllRepairReasonQuery } from "@/services/api/repairReason/repairReasonApi";
 import { addRepairType, addTask, removeTask } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function RepairOrderInfoForm(props) {
   const { data, isLoading, isFetching, isError } = useGetRepairDataQuery();
+  const {data: repairReason, isLoading: rrLoading, isFetching: rrFetching, isError: rrError} = useGetAllRepairReasonQuery()
   const dispatch = useDispatch();
   const { control, register, errors, setValue, watch } = props;
   const repairOrder = useSelector((state) => state.repairOrder);
 
-  if (isError) return <div>Có lỗi xảy ra!</div>;
+  if (isError || rrError) return <div>Có lỗi xảy ra!</div>;
 
-  if (isLoading)
+  if (isLoading || isFetching || rrLoading || rrFetching)
     return (
       <div>
         <Loading />
@@ -101,7 +101,7 @@ export default function RepairOrderInfoForm(props) {
         <div className={styles["new-order-info__control"]}>
           <label htmlFor="repairReason">Lý do bảo hành (*)</label>
           <select id="repairReason" {...register("repairReason", { required: true })}>
-            {data?.repairReasons.data.map((item) => {
+            {repairReason?.data.map((item) => {
               return (
                 <option key={item.id} value={item.id}>
                   {item.reason}
@@ -166,7 +166,7 @@ const preprocessingUserData = (users) => {
   const technicians = [];
   for (let i = 0; i < users?.data.length; i++) {
     for (let j = 0; j < users?.data[i]?.roles.length; j++) {
-      if (users?.data[i]?.roles[j] === "Techlead") {
+      if (users?.data[i]?.roles[j] === "Receiver") {
         receivers.push(users?.data[i]);
       } else if (users?.data[i]?.roles[j] === "Technician") {
         technicians.push(users?.data[i]);

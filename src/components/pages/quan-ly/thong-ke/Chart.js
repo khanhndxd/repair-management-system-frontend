@@ -100,8 +100,6 @@ export default function Chart({ type }) {
         )}
         chartTitle={`Tổng doanh thu trong ${dateRange.label}`}
       />
-      // <>
-      // TEST</>
     );
   }
 

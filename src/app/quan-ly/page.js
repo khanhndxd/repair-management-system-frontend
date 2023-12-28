@@ -12,8 +12,8 @@ export default function Home() {
           <StatusBox title={"Đã tiếp nhận"} statusId={2} />
           <StatusBox title={"Đang sửa chữa"} statusId={3} />
           <StatusBox title={"Đã chuyển sản phẩm về hãng"} statusId={4} />
-          <StatusBox title={"Đã sửa xong"} statusId={5} />
-          <StatusBox title={"Đã nhận sản phẩm từ hãng"} statusId={6} />
+          <StatusBox title={"Đã nhận sản phẩm từ hãng"} statusId={5} />
+          <StatusBox title={"Đã sửa xong"} statusId={6} />
           <StatusBox title={"Đã hủy"} statusId={7} />
           <StatusBox title={"Đã hoàn thành"} statusId={8} />
           <StatusBox title={"Đã trả hàng"} statusId={9} />

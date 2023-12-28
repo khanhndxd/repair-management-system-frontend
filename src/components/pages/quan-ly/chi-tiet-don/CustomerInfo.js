@@ -4,7 +4,8 @@ import RepairOrderProductList from "./RepairOrderProductList";
 import { convertToVND } from "@/services/helper/helper";
 
 export default function CustomerInfo(props) {
-  const { customer, createdBy, repairedBy, receivedBy, repairProduct, repairTasks, repairCustomerProducts, total } = props;
+  const { customer, createdBy, repairedBy, receivedBy, repairProduct, repairTasks, repairCustomerProducts, repairAccessories, total } =
+    props;
 
   return (
     <>
@@ -19,13 +20,13 @@ export default function CustomerInfo(props) {
           <strong>Địa chỉ </strong>: {customer.address}
         </p>
         <p>
-          <strong>Người tiếp nhận</strong>: {repairedBy.userName}
+          <strong>Người tiếp nhận</strong>: {receivedBy.userName}
         </p>
         <p>
           <strong>Điện thoại</strong>: {customer.phone}
         </p>
         <p>
-          <strong>Kỹ thuật viên</strong>: {receivedBy.userName}
+          <strong>Kỹ thuật viên</strong>: {repairedBy.userName}
         </p>
         <p>
           <strong>Email</strong>: {customer.email}
@@ -33,7 +34,8 @@ export default function CustomerInfo(props) {
       </div>
       <RepairOrderProductList repairProduct={repairProduct} repairTasks={repairTasks} repairCustomerProducts={repairCustomerProducts} />
       <p>
-        Tổng chi phí: <strong style={{ fontSize: "24px" }}>{convertToVND(total)}</strong>
+        Tổng chi phí: <strong style={{ fontSize: "24px" }}>{convertToVND(total)}</strong>{" "}
+        {repairAccessories.length !== 0 ? <i>(Đã bao gồm giá linh kiện)</i> : null}
       </p>
     </>
   );
