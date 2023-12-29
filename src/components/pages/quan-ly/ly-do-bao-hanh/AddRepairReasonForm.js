@@ -61,7 +61,7 @@ export default function AddRepairReasonForm() {
           Hủy
         </button>
         <button style={{ marginLeft: "auto" }} type="submit" className={styles["button"]}>
-          Chỉnh sửa
+          Thêm mới
         </button>
       </div>
     </form>

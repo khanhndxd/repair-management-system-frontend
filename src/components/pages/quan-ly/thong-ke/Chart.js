@@ -493,7 +493,7 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
   }
 
   let dataset = {
-    data: [0, 0],
+    data: [0, 0, 0],
     backgroundColor: [getRandomColor(), getRandomColor()],
     label: "Doanh thu",
   };
@@ -519,6 +519,10 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
             total += price;
             dataset.data[1] += price;
             dataset.backgroundColor[1] = getRandomColor();
+          } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
+            total += price;
+            dataset.data[2] += price;
+            dataset.backgroundColor[2] = getRandomColor();
           }
         }
       } else if (timeRange === "current-day") {
@@ -533,6 +537,10 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
             total += price;
             dataset.data[1] += price;
             dataset.backgroundColor[1] = getRandomColor();
+          } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
+            total += price;
+            dataset.data[2] += price;
+            dataset.backgroundColor[2] = getRandomColor();
           }
         }
       } else {
@@ -544,13 +552,17 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
           total += price;
           dataset.data[1] += price;
           dataset.backgroundColor[1] = getRandomColor();
+        } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
+          total += price;
+          dataset.data[2] += price;
+          dataset.backgroundColor[2] = getRandomColor();
         }
       }
     }
   }
 
   const chartData = {
-    labels: ["Đổi mới", "Sửa chữa"],
+    labels: ["Đổi mới", "Sửa chữa", "Bảo hành"],
     datasets: [dataset],
     total: total,
   };

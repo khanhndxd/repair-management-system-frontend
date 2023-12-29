@@ -90,7 +90,11 @@ export default function RepairOrderTable() {
           Cell: ({ row }) => {
             return (
               <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "5px" }}>
-                <button onClick={() => handleDetail(row.values.id)} className={styles["no-effect-button--hover-on"]} style={{ fontWeight: "bold" }}>
+                <button
+                  onClick={() => handleDetail(row.values.id)}
+                  className={styles["no-effect-button--hover-on"]}
+                  style={{ fontWeight: "bold" }}
+                >
                   <Image priority src={SearchIcon} width={20} height={20} alt="detail" />
                 </button>
                 {auth.role === roles.admin ? (

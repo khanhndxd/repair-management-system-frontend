@@ -1,15 +1,15 @@
 "use client";
 import Loading from "@/app/loading";
-import MultipleSelect from "@/components/common/MultipleSelect";
+import MultipleTaskSelect from "@/components/common/MultipleTaskSelect";
 import { useGetRepairDataQuery } from "@/services/api/repairData/repairDataApi";
 import { useGetAllRepairReasonQuery } from "@/services/api/repairReason/repairReasonApi";
-import { addRepairType, addTask, removeTask } from "@/store/features/repairOrderSlice";
+import { addRepairType, addTask, removeAllTasks, removeTask } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function RepairOrderInfoForm(props) {
   const { data, isLoading, isFetching, isError } = useGetRepairDataQuery();
-  const {data: repairReason, isLoading: rrLoading, isFetching: rrFetching, isError: rrError} = useGetAllRepairReasonQuery()
+  const { data: repairReason, isLoading: rrLoading, isFetching: rrFetching, isError: rrError } = useGetAllRepairReasonQuery();
   const dispatch = useDispatch();
   const { control, register, errors, setValue, watch } = props;
   const repairOrder = useSelector((state) => state.repairOrder);
@@ -36,6 +36,7 @@ export default function RepairOrderInfoForm(props) {
       }
     }
     dispatch(addRepairType({ object: repairType }));
+    dispatch(removeAllTasks());
   };
 
   return (
@@ -131,16 +132,7 @@ export default function RepairOrderInfoForm(props) {
       </div>
       <div className={styles["new-order-info__control"]}>
         <label htmlFor="task">Công việc (*)</label>
-        {/* <select id="task" {...register("task", { required: true, onChange: (e) => handleTaskChange(e) })}>
-          {data?.tasks.data.map((item) => {
-            return (
-              <option key={item.id} value={item.id}>
-                {item.name} | {convertToVND(item.price)}
-              </option>
-            );
-          })}
-        </select> */}
-        <MultipleSelect
+        <MultipleTaskSelect
           register={register}
           errors={errors}
           data={data?.tasks.data}
@@ -151,11 +143,6 @@ export default function RepairOrderInfoForm(props) {
           addToReduxStore={addTask}
           removeFromReduxStore={removeTask}
         />
-        {/* {errors["task"] && (
-          <span style={{ color: "#cc3300", fontStyle: "italic", fontSize: "14px" }}>
-            Không được để trống công việc
-          </span>
-        )} */}
       </div>
     </>
   );

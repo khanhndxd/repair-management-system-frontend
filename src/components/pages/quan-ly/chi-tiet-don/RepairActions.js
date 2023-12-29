@@ -162,7 +162,6 @@ export default function RepairActions(props) {
 
       if (response.ok) {
         const blob = await response.blob();
-        console.log(blob);
         setPdfBlob(blob);
       } else {
         console.error("Lỗi khi tạo phiếu bảo hành");

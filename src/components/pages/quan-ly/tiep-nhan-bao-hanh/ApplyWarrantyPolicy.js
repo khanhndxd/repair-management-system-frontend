@@ -6,12 +6,19 @@ import styles from "@/styles/main.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function ApplyWarrantyPolicy({ handleOpen, policyId }) {
-  const { data, isLoading, isfetching, isError } = useGetWarrantyPolicyTasksByPolicyIdQuery(policyId ? policyId : -1);
+  const { data, isLoading, isFetching, isError } = useGetWarrantyPolicyTasksByPolicyIdQuery(policyId ? policyId : -1);
   const repairOrderTasks = useSelector((state) => state.repairOrder.tasks);
   const dispatch = useDispatch();
+
   if (isError) return <div>Có lỗi xảy ra</div>;
 
-  if (isLoading || isfetching) return <Loading />;
+  if (isLoading || isFetching) {
+    return (
+      <div>
+        <Loading />
+      </div>
+    );
+  }
 
   const handleClose = () => {
     handleOpen(false);

@@ -14,9 +14,9 @@ import {
   addCustomer,
   addNewRepairProduct,
   addProduct,
+  addRepairAccessoryPrice,
   addRepairType,
   addTask,
-  addTotalPrice,
   reset,
 } from "@/store/features/repairOrderSlice";
 import styles from "@/styles/main.module.scss";
@@ -42,7 +42,11 @@ export default function EditRepairOrderPage() {
     if (isLoading === false && isFetching === false) {
       if (data) {
         dispatch(reset());
-        dispatch(addTotalPrice(data.data.totalPrice));
+        let repairAccessoryPrice = 0;
+        for (let i = 0; i < data.data.repairAccessories.length; i++) {
+          repairAccessoryPrice += data.data.repairAccessories[i].accessory.price * data.data.repairAccessories[i].quantity;
+        }
+        dispatch(addRepairAccessoryPrice(repairAccessoryPrice));
         dispatch(addCustomer(data.data.customer));
         dispatch(addRepairType({ object: data.data.repairType }));
         for (let i = 0; i < data.data.repairProducts.length; i++) {
@@ -77,6 +81,10 @@ export default function EditRepairOrderPage() {
   }, [isLoading, isFetching, data]);
 
   const handleEditRepairOrder = async (data) => {
+    if ((repairOrder.products.length === 0 && repairOrder.newRepairProducts.length === 0) || repairOrder.tasks.length === 0) {
+      dispatch(showNotification({ message: "Chưa chọn sản phẩm hoặc công việc nào", type: "warning" }));
+      return null;
+    }
     try {
       dispatch(showLoading({ content: "Đang cập nhật sản phẩm bảo hành..." }));
 

@@ -2,10 +2,11 @@
 import { convertToVND, isContainValueInArrayOfObject } from "@/services/helper/helper";
 import styles from "@/styles/main.module.scss";
 import { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
-export default function MultipleSelect(props) {
+export default function MultipleTaskSelect(props) {
   const { register, errors, setValue, name, data, watch, reduxDataStore, addToReduxStore, removeFromReduxStore } = props;
+  const repairOrder = useSelector((state) => state.repairOrder);
   const dispatch = useDispatch();
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
 
@@ -28,7 +29,7 @@ export default function MultipleSelect(props) {
       <div className={styles["multiple-select__header"]}>
         {reduxDataStore.length === 0 ? (
           <p>
-            <i>--Chọn--</i>
+            <i>{repairOrder.isWarranted === true ? "Vui lòng chọn áp dụng bảo hành để chọn công việc" : "--Chọn--"}</i>
           </p>
         ) : (
           <>
@@ -45,11 +46,13 @@ export default function MultipleSelect(props) {
             })}
           </>
         )}
-        <span className={styles["multiple-select__header__arrow"]} onClick={() => setIsOpenDropdown((prev) => !prev)}>
-          &#10094;
-        </span>
+        {repairOrder.isWarranted === true ? null : (
+          <span className={styles["multiple-select__header__arrow"]} onClick={() => setIsOpenDropdown((prev) => !prev)}>
+            &#10094;
+          </span>
+        )}
       </div>
-      {isOpenDropdown && (
+      {isOpenDropdown === true && repairOrder.isWarranted === false ? (
         <div className={styles["multiple-select__dropdown"]}>
           {data.map((item) => {
             return (
@@ -70,7 +73,7 @@ export default function MultipleSelect(props) {
             );
           })}
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

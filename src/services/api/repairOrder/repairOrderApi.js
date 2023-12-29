@@ -67,10 +67,6 @@ const repairOrderApi = baseApi.injectEndpoints({
         method: "PATCH",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [
-        { type: "RepairOrders", id },
-        { type: "RepairOrders", id: "List" },
-      ],
     }),
     deleteRepairOrder: build.mutation({
       query: (body) => ({

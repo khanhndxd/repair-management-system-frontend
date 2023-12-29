@@ -14,7 +14,7 @@ const initialState = {
   isExchange: false,
   isOrderFromCustomerPage: false,
   newRepairProducts: [],
-  totalPrice: 0,
+  repairAccessoryPrice: 0,
 };
 
 export const repairOrderSlice = createSlice({
@@ -26,7 +26,7 @@ export const repairOrderSlice = createSlice({
     },
     addRepairType: (state, action) => {
       state.isWarranted = action.payload.object.name.localeCompare("Bảo hành", "vi", { sensitivity: "base" }) === 0;
-      // state.isExchange = action.payload.object.name.localeCompare("Đổi mới", "vi", { sensitivity: "base" }) === 0;
+      state.repairType = action.payload.object;
 
       if (state.isWarranted === true) {
         state.total = convertToVND(0);
@@ -36,27 +36,12 @@ export const repairOrderSlice = createSlice({
         state.total = state.tasks.reduce((acc, currentItem) => {
           return acc + currentItem.price;
         }, 0);
-        
-        if (state.totalPrice !== 0) {
-          state.total = state.total + convertFromVND(state.totalPrice);
+
+        if (state.repairAccessoryPrice !== 0) {
+          state.total = state.total + state.repairAccessoryPrice;
         }
         state.total = convertToVND(state.total);
       }
-
-      // if (state.isExchange === true) {
-      //   state.total = state.tasks.reduce((acc, currentItem) => {
-      //     return acc + currentItem.price;
-      //   }, 0);
-      //   const productOriginalPrice = state.products.reduce((acc, currentItem) => {
-      //     if (currentItem.isWarrantyExpired === true) {
-      //       return acc + currentItem.originalPrice;
-      //     }
-      //   }, 0);
-      //   if (productOriginalPrice) {
-      //     state.total += productOriginalPrice;
-      //   }
-      //   state.total = convertToVND(state.total);
-      // }
     },
     addNewRepairProduct: (state, action) => {
       const isDuplicateId = state.newRepairProducts.some((product) => product.id == "SPM" + action.payload.object.id);
@@ -94,19 +79,6 @@ export const repairOrderSlice = createSlice({
           type: "product",
         });
         state.anyProduct = true;
-        // let alpha = state.isWarranted === true ? 0 : 1;
-
-        // if (state.isExchange === true) {
-        //   const productOriginalPrice = state.products.reduce((acc, currentItem) => {
-        //     if (currentItem.isWarrantyExpired === true) {
-        //       return acc + currentItem.originalPrice;
-        //     }
-        //   }, 0);
-        //   if (productOriginalPrice) {
-        //     state.total = convertFromVND(state.total) + productOriginalPrice;
-        //     state.total = convertToVND(state.total * alpha);
-        //   }
-        // }
       }
     },
     addTask: (state, action) => {
@@ -126,26 +98,23 @@ export const repairOrderSlice = createSlice({
         });
         let alpha = state.isWarranted === true ? 0 : 1;
 
-        state.total = state.tasks.reduce((acc, currentItem) => {
-          return acc + currentItem.price;
-        }, 0);
-
-        if (state.totalPrice !== 0) {
-          state.total = state.total + convertFromVND(state.totalPrice);
+        if (state.isWarranted === true) {
+          state.total = 0;
+        } else {
+          state.total = state.tasks.reduce((acc, currentItem) => {
+            return acc + currentItem.price;
+          }, 0);
         }
 
-        // if (state.isExchange === true) {
-        //   const productOriginalPrice = state.products.reduce((acc, currentItem) => {
-        //     if (currentItem.isWarrantyExpired === true) {
-        //       return acc + currentItem.originalPrice;
-        //     }
-        //   }, 0);
-        //   if (productOriginalPrice) {
-        //     state.total += productOriginalPrice;
-        //   }
-        // }
+        if (state.repairAccessoryPrice !== 0) {
+          state.total = state.total + state.repairAccessoryPrice;
+        }
 
-        state.total = convertToVND(state.total * alpha);
+        if (state.repairAccessoryPrice !== 0) {
+          state.total = convertToVND(state.total);
+        } else {
+          state.total = convertToVND(state.total * alpha);
+        }
       }
     },
     updateTaskDescription: (state, action) => {
@@ -175,27 +144,33 @@ export const repairOrderSlice = createSlice({
       });
       let alpha = state.isWarranted === true ? 0 : 1;
 
-      state.total = state.tasks.reduce((acc, currentItem) => {
-        return acc + currentItem.price;
-      }, 0);
-
-      if (state.totalPrice !== 0) {
-        state.total = state.total + convertFromVND(state.totalPrice);
+      if (state.isWarranted === true) {
+        state.total = 0;
+      } else {
+        state.total = state.tasks.reduce((acc, currentItem) => {
+          return acc + currentItem.price;
+        }, 0);
       }
 
-      // if (state.isExchange === true) {
-      //   const productOriginalPrice = state.products.reduce((acc, currentItem) => {
-      //     if (currentItem.isWarrantyExpired === true) {
-      //       return acc + currentItem.originalPrice;
-      //     }
-      //   }, 0);
+      if (state.repairAccessoryPrice !== 0) {
+        state.total = state.total + state.repairAccessoryPrice;
+        state.total = convertToVND(state.total);
+      } else {
+        state.total = convertToVND(state.total * alpha);
+      }
+    },
+    removeAllTasks: (state) => {
+      state.tasks = [];
+      let alpha = state.isWarranted === true ? 0 : 1;
 
-      //   if (productOriginalPrice) {
-      //     state.total += productOriginalPrice;
-      //   }
-      // }
+      state.total = 0;
 
-      state.total = convertToVND(state.total * alpha);
+      if (state.repairAccessoryPrice !== 0) {
+        state.total = state.total + state.repairAccessoryPrice;
+        state.total = convertToVND(state.total);
+      } else {
+        state.total = convertToVND(state.total * alpha);
+      }
     },
     removeTasksProducts: (state, action) => {
       state.tasksProducts = state.tasksProducts.filter((item) => {
@@ -215,31 +190,26 @@ export const repairOrderSlice = createSlice({
       }
       let alpha = state.isWarranted === true ? 0 : 1;
 
-      state.total = state.tasks.reduce((acc, currentItem) => {
-        return acc + currentItem.price;
-      }, 0);
-
-      if (state.totalPrice !== 0) {
-        state.total = state.total + convertFromVND(state.totalPrice);
+      if (state.isWarranted === true) {
+        state.total = 0;
+      } else {
+        state.total = state.tasks.reduce((acc, currentItem) => {
+          return acc + currentItem.price;
+        }, 0);
       }
 
-      // if (state.isExchange === true) {
-      //   const productOriginalPrice = state.products.reduce((acc, currentItem) => {
-      //     if (currentItem.isWarrantyExpired === true) {
-      //       return acc + currentItem.originalPrice;
-      //     }
-      //   }, 0);
-      //   if (productOriginalPrice) {
-      //     state.total += productOriginalPrice;
-      //   }
-      // }
-      state.total = convertToVND(state.total * alpha);
+      if (state.repairAccessoryPrice !== 0) {
+        state.total = state.total + state.repairAccessoryPrice;
+        state.total = convertToVND(state.total);
+      } else {
+        state.total = convertToVND(state.total * alpha);
+      }
     },
     isOrderFromCustomerPage: (state, action) => {
       state.isOrderFromCustomerPage = action.payload.flag;
     },
-    addTotalPrice: (state, action) => {
-      state.totalPrice = state.total + action.payload;
+    addRepairAccessoryPrice: (state, action) => {
+      state.repairAccessoryPrice = action.payload;
     },
     reset: (state) => {
       Object.assign(state, initialState);
@@ -257,9 +227,10 @@ export const {
   updateProductDescription,
   updateNewProductDescription,
   removeTask,
+  removeAllTasks,
   removeTasksProducts,
   isOrderFromCustomerPage,
-  addTotalPrice,
+  addRepairAccessoryPrice,
   reset,
 } = repairOrderSlice.actions;
 export default repairOrderSlice.reducer;
