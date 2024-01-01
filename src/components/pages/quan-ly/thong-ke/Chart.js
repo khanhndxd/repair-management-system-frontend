@@ -236,8 +236,6 @@ function getRepairTypeChartData(data, timeRange, year, startDate, endDate) {
   });
 
   for (let i = 0; i < data.length; i++) {
-    const orderYear = format(parseISO(data[i].createdAt), "yyyy");
-    // if (orderYear === year) {
     const repairTypeName = data[i]["repairType"]["name"];
 
     const repairTypeTime = format(parseISO(data[i].createdAt), timeFormat);
@@ -260,26 +258,22 @@ function getRepairTypeChartData(data, timeRange, year, startDate, endDate) {
         datasets[key].data[units.indexOf(repairTypeTime)]++;
       }
     } else {
-      if (orderYear === year) {
-        if (timeRange === "current-week") {
-          // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
-          const currentDataDate = parseISO(data[i].createdAt);
-          if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
-            datasets[key].data[parseInt(repairTypeTime, 10) - 1]++;
-          }
-        } else if (timeRange === "current-day") {
-          // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
-          const currentDataDate = parseISO(data[i].createdAt);
-          if (isSameDay(currentDataDate, currentDate)) {
-            datasets[key].data[0]++;
-          }
-        } else {
+      if (timeRange === "current-week") {
+        // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
+        const currentDataDate = parseISO(data[i].createdAt);
+        if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
           datasets[key].data[parseInt(repairTypeTime, 10) - 1]++;
         }
+      } else if (timeRange === "current-day") {
+        // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
+        const currentDataDate = parseISO(data[i].createdAt);
+        if (isSameDay(currentDataDate, currentDate)) {
+          datasets[key].data[0]++;
+        }
+      } else {
+        datasets[key].data[parseInt(repairTypeTime, 10) - 1]++;
       }
     }
-
-    // }
   }
 
   const chartData = {
@@ -347,7 +341,6 @@ function getChartArrayData(data, dataProp, repairTypeName, timeRange, year, star
 
   for (let i = 0; i < data.length; i++) {
     const innerData = data[i][dataProp];
-    const orderYear = format(parseISO(data[i].createdAt), "yyyy");
 
     if (repairTypeName === "" || repairTypeName === null) {
       for (let j = 0; j < innerData.length; j++) {
@@ -377,22 +370,20 @@ function getChartArrayData(data, dataProp, repairTypeName, timeRange, year, star
             datasets[key].data[units.indexOf(dataTime)]++;
           }
         } else {
-          if (orderYear === year) {
-            if (timeRange === "current-week") {
-              // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
-              const currentDataDate = parseISO(data[i].createdAt);
-              if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
-                datasets[key].data[parseInt(dataTime, 10) - 1]++;
-              }
-            } else if (timeRange === "current-day") {
-              // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
-              const currentDataDate = parseISO(data[i].createdAt);
-              if (isSameDay(currentDataDate, currentDate)) {
-                datasets[key].data[0]++;
-              }
-            } else {
+          if (timeRange === "current-week") {
+            // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
+            const currentDataDate = parseISO(data[i].createdAt);
+            if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
               datasets[key].data[parseInt(dataTime, 10) - 1]++;
             }
+          } else if (timeRange === "current-day") {
+            // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
+            const currentDataDate = parseISO(data[i].createdAt);
+            if (isSameDay(currentDataDate, currentDate)) {
+              datasets[key].data[0]++;
+            }
+          } else {
+            datasets[key].data[parseInt(dataTime, 10) - 1]++;
           }
         }
       }
@@ -426,22 +417,20 @@ function getChartArrayData(data, dataProp, repairTypeName, timeRange, year, star
               datasets[key].data[units.indexOf(dataTime)]++;
             }
           } else {
-            if (orderYear === year) {
-              if (timeRange === "current-week") {
-                // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
-                const currentDataDate = parseISO(data[i].createdAt);
-                if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
-                  datasets[key].data[parseInt(dataTime, 10) - 1]++;
-                }
-              } else if (timeRange === "current-day") {
-                // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
-                const currentDataDate = parseISO(data[i].createdAt);
-                if (isSameDay(currentDataDate, currentDate)) {
-                  datasets[key].data[0]++;
-                }
-              } else {
+            if (timeRange === "current-week") {
+              // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
+              const currentDataDate = parseISO(data[i].createdAt);
+              if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
                 datasets[key].data[parseInt(dataTime, 10) - 1]++;
               }
+            } else if (timeRange === "current-day") {
+              // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
+              const currentDataDate = parseISO(data[i].createdAt);
+              if (isSameDay(currentDataDate, currentDate)) {
+                datasets[key].data[0]++;
+              }
+            } else {
+              datasets[key].data[parseInt(dataTime, 10) - 1]++;
             }
           }
         }
@@ -502,48 +491,12 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
   for (let i = 0; i < data.length; i++) {
     const price = data[i]["totalPrice"];
     const repairType = data[i]["repairType"].name;
-    const orderYear = format(parseISO(data[i].createdAt), "yyyy");
 
     // Kiểm tra điều kiện để xác định xem dữ liệu có nằm trong khoảng thời gian được chọn không
-    // Nếu không cần kiểm tra thời gian, bạn có thể bỏ đi phần này
-    if (orderYear === year) {
-      if (timeRange === "current-week") {
-        // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
-        const currentDataDate = parseISO(data[i].createdAt);
-        if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
-          if (repairType.toLowerCase() === "Đổi mới".toLowerCase()) {
-            total += price;
-            dataset.data[0] += price;
-            dataset.backgroundColor[0] = getRandomColor();
-          } else if (repairType.toLowerCase() === "Sửa chữa".toLowerCase()) {
-            total += price;
-            dataset.data[1] += price;
-            dataset.backgroundColor[1] = getRandomColor();
-          } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
-            total += price;
-            dataset.data[2] += price;
-            dataset.backgroundColor[2] = getRandomColor();
-          }
-        }
-      } else if (timeRange === "current-day") {
-        // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
-        const currentDataDate = parseISO(data[i].createdAt);
-        if (isSameDay(currentDataDate, currentDate)) {
-          if (repairType.toLowerCase() === "Đổi mới".toLowerCase()) {
-            total += price;
-            dataset.data[0] += price;
-            dataset.backgroundColor[0] = getRandomColor();
-          } else if (repairType.toLowerCase() === "Sửa chữa".toLowerCase()) {
-            total += price;
-            dataset.data[1] += price;
-            dataset.backgroundColor[1] = getRandomColor();
-          } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
-            total += price;
-            dataset.data[2] += price;
-            dataset.backgroundColor[2] = getRandomColor();
-          }
-        }
-      } else {
+    if (timeRange === "current-week") {
+      // Kiểm tra xem dữ liệu hiện tại có thuộc ngày trong tuần đó không
+      const currentDataDate = parseISO(data[i].createdAt);
+      if (isWithinInterval(currentDataDate, { start: weekStart, end: weekEnd })) {
         if (repairType.toLowerCase() === "Đổi mới".toLowerCase()) {
           total += price;
           dataset.data[0] += price;
@@ -557,6 +510,38 @@ function getTotalPriceChartData(data, repairTypeName, timeRange, year, startDate
           dataset.data[2] += price;
           dataset.backgroundColor[2] = getRandomColor();
         }
+      }
+    } else if (timeRange === "current-day") {
+      // Kiểm tra xem dữ liệu hiện tại có thuộc ngày hiện tại không
+      const currentDataDate = parseISO(data[i].createdAt);
+      if (isSameDay(currentDataDate, currentDate)) {
+        if (repairType.toLowerCase() === "Đổi mới".toLowerCase()) {
+          total += price;
+          dataset.data[0] += price;
+          dataset.backgroundColor[0] = getRandomColor();
+        } else if (repairType.toLowerCase() === "Sửa chữa".toLowerCase()) {
+          total += price;
+          dataset.data[1] += price;
+          dataset.backgroundColor[1] = getRandomColor();
+        } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
+          total += price;
+          dataset.data[2] += price;
+          dataset.backgroundColor[2] = getRandomColor();
+        }
+      }
+    } else {
+      if (repairType.toLowerCase() === "Đổi mới".toLowerCase()) {
+        total += price;
+        dataset.data[0] += price;
+        dataset.backgroundColor[0] = getRandomColor();
+      } else if (repairType.toLowerCase() === "Sửa chữa".toLowerCase()) {
+        total += price;
+        dataset.data[1] += price;
+        dataset.backgroundColor[1] = getRandomColor();
+      } else if (repairType.toLowerCase() === "Bảo hành".toLowerCase()) {
+        total += price;
+        dataset.data[2] += price;
+        dataset.backgroundColor[2] = getRandomColor();
       }
     }
   }

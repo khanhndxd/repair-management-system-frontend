@@ -16,6 +16,9 @@ export const options = {
       stacked: true,
       ticks: {
         stepSize: 1,
+        callback: (value) => {
+          return `${value} sản phẩm`;
+        },
       },
     },
   },
